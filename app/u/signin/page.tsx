@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Home } from "lucide-react";
 import CarouselContainer from "@/components/carousel/CarouselContainer";
 import { CarouselItem } from "@/components/carousel/type";
-import SigninForm from "@/components/forms/user/signin";
+import SigninForm from "@/components/forms/user/Signin";
 import NavbarLogo from "@/components/nevigation/NavMenu/NavbarLogo";
 
 // ข้อมูลรูปภาพและข้อความสำหรับ Carousel ฝั่งซ้าย

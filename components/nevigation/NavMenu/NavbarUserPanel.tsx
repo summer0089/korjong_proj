@@ -6,7 +6,21 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ChevronDown, User, CalendarDays, LogOut, LogIn } from "lucide-react";
 import { Button } from "@/components/form_controls/Button";
-import { NavbarUserPanelProps } from "./types";
+import { NavbarUserPanelProps, UserMenuItem } from "./types";
+
+/** เมนูเริ่มต้นสำหรับผู้ใช้งาน */
+export const DEFAULT_USER_MENUS: UserMenuItem[] = [
+  {
+    title: "แก้ไขข้อมูล",
+    href: "/u/profile",
+    icon: <User className="w-4 h-4 text-text-muted" />,
+  },
+  {
+    title: "ดูรายการที่เคยจองห้องประชุม",
+    href: "/u/bookings",
+    icon: <CalendarDays className="w-4 h-4 text-text-muted" />,
+  },
+];
 
 /**
  * NavbarUserPanel Component
@@ -15,12 +29,15 @@ import { NavbarUserPanelProps } from "./types";
  */
 export function NavbarUserPanel({
   user,
+  menus,
+  userMenus,
   isLoggedIn = true,
   onLogout,
   isMobile = false,
   className = "",
   onItemClick,
 }: NavbarUserPanelProps) {
+  const effectiveMenus = menus ?? userMenus ?? DEFAULT_USER_MENUS;
   const pathname = usePathname();
 
   // สถานะเปิด/ปิด Dropdown Menu ของ User
@@ -31,7 +48,7 @@ export function NavbarUserPanel({
 
   // ปิด Dropdown เมื่อมีการเปลี่ยนหน้า (Route change)
   useEffect(() => {
-    setIsUserMenuOpen(false);
+    return () => setIsUserMenuOpen(false);
   }, [pathname]);
 
   // Handle click outside บน Desktop dropdown
@@ -88,7 +105,7 @@ export function NavbarUserPanel({
       <div className={className}>
         {/* สรุปข้อมูลผู้ใช้ในแถบมือถือ */}
         <div className="flex items-center gap-3 p-3 bg-secondary-50/70 rounded-xl border border-secondary-100 mb-2">
-          <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-tr from-primary-600 to-accent-600 shrink-0 flex items-center justify-center text-text-inverse font-semibold text-xs shadow-xs">
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-linear-to-tr from-primary-600 to-accent-600 shrink-0 flex items-center justify-center text-text-inverse font-semibold text-xs shadow-xs">
             {user.profile_image ? (
               <Image
                 src={user.profile_image}
@@ -113,22 +130,52 @@ export function NavbarUserPanel({
 
         {/* ลิงก์เมนูสำหรับผู้ใช้ในแถบมือถือ */}
         <div className="pt-2 border-t border-secondary-200 space-y-1">
-          <Link
-            href="/u/profile"
-            onClick={onItemClick}
-            className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-text-secondary rounded-lg hover:bg-secondary-50 hover:text-text transition-colors"
-          >
-            <User className="w-4 h-4 text-text-muted" />
-            <span>แก้ไขข้อมูล</span>
-          </Link>
-          <Link
-            href="/u/bookings"
-            onClick={onItemClick}
-            className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-text-secondary rounded-lg hover:bg-secondary-50 hover:text-text transition-colors"
-          >
-            <CalendarDays className="w-4 h-4 text-text-muted" />
-            <span>ดูรายการที่เคยจองห้องประชุม</span>
-          </Link>
+          {effectiveMenus.map((item, idx) => {
+            if (item.roles && item.roles.length > 0 && user?.role) {
+              if (!item.roles.includes(user.role)) return null;
+            }
+
+            const handleClick = () => {
+              if (item.onClick) item.onClick();
+              if (onItemClick) onItemClick();
+            };
+
+            if (item.href) {
+              return (
+                <Link
+                  key={item.title || idx}
+                  href={item.href}
+                  onClick={handleClick}
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-text-secondary rounded-lg hover:bg-secondary-50 hover:text-text transition-colors"
+                >
+                  {item.icon && <span>{item.icon}</span>}
+                  <span>{item.title}</span>
+                  {item.badge && (
+                    <span className="text-2xs px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 ml-auto font-medium">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            }
+
+            return (
+              <button
+                key={item.title || idx}
+                type="button"
+                onClick={handleClick}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-text-secondary rounded-lg hover:bg-secondary-50 hover:text-text text-left transition-colors cursor-pointer"
+              >
+                {item.icon && <span>{item.icon}</span>}
+                <span>{item.title}</span>
+                {item.badge && (
+                  <span className="text-2xs px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 ml-auto font-medium">
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
           <button
             type="button"
             onClick={handleLogout}
@@ -170,7 +217,7 @@ export function NavbarUserPanel({
         aria-label="User profile menu"
         aria-expanded={isUserMenuOpen}
       >
-        <div className="relative w-9 h-9 rounded-full overflow-hidden bg-gradient-to-tr from-primary-600 to-accent-600 ring-2 ring-secondary-200 group-hover:ring-primary-500 transition-all flex items-center justify-center text-text-inverse font-semibold text-xs shadow-xs">
+        <div className="relative w-9 h-9 rounded-full overflow-hidden bg-linear-to-tr from-primary-600 to-accent-600 ring-2 ring-secondary-200 group-hover:ring-primary-500 transition-all flex items-center justify-center text-text-inverse font-semibold text-xs shadow-xs">
           {user.profile_image ? (
             <Image
               src={user.profile_image}
@@ -194,9 +241,8 @@ export function NavbarUserPanel({
         </div>
 
         <ChevronDown
-          className={`hidden lg:block w-3.5 h-3.5 text-text-muted transition-transform duration-200 ${
-            isUserMenuOpen ? "rotate-180 text-primary-600" : ""
-          }`}
+          className={`hidden lg:block w-3.5 h-3.5 text-text-muted transition-transform duration-200 ${isUserMenuOpen ? "rotate-180 text-primary-600" : ""
+            }`}
         />
       </button>
 
@@ -205,7 +251,7 @@ export function NavbarUserPanel({
         <div className="absolute right-0 mt-2 w-72 bg-surface rounded-2xl shadow-xl border border-secondary-200 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
           {/* Header ข้อมูลผู้ใช้ */}
           <div className="px-4 py-3 border-b border-secondary-100 flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full overflow-hidden bg-gradient-to-tr from-primary-600 to-accent-600 shrink-0 flex items-center justify-center text-text-inverse font-bold text-sm ring-2 ring-primary-100">
+            <div className="w-11 h-11 rounded-full overflow-hidden bg-linear-to-tr from-primary-600 to-accent-600 shrink-0 flex items-center justify-center text-text-inverse font-bold text-sm ring-2 ring-primary-100">
               {user.profile_image ? (
                 <Image
                   src={user.profile_image}
@@ -237,23 +283,71 @@ export function NavbarUserPanel({
 
           {/* รายการเมนูผู้ใช้งาน */}
           <div className="px-2 py-1.5 space-y-0.5">
-            <Link
-              href="/u/profile"
-              onClick={() => setIsUserMenuOpen(false)}
-              className="flex items-center gap-3 px-3 py-2 text-xs font-medium text-text-secondary rounded-xl hover:bg-secondary-50 hover:text-text transition-colors"
-            >
-              <User className="w-4 h-4 text-text-muted" />
-              <span>แก้ไขข้อมูล</span>
-            </Link>
+            {effectiveMenus.map((item, idx) => {
+              if (item.roles && item.roles.length > 0 && user?.role) {
+                if (!item.roles.includes(user.role)) return null;
+              }
 
-            <Link
-              href="/u/bookings"
-              onClick={() => setIsUserMenuOpen(false)}
-              className="flex items-center gap-3 px-3 py-2 text-xs font-medium text-text-secondary rounded-xl hover:bg-secondary-50 hover:text-text transition-colors"
-            >
-              <CalendarDays className="w-4 h-4 text-text-muted" />
-              <span>ดูรายการที่เคยจองห้องประชุม</span>
-            </Link>
+              const handleClick = () => {
+                setIsUserMenuOpen(false);
+                if (item.onClick) item.onClick();
+                if (onItemClick) onItemClick();
+              };
+
+              if (item.href) {
+                return (
+                  <Link
+                    key={item.title || idx}
+                    href={item.href}
+                    onClick={handleClick}
+                    className="flex items-center gap-3 px-3 py-2 text-xs font-medium text-text-secondary rounded-xl hover:bg-secondary-50 hover:text-text transition-colors"
+                  >
+                    {item.icon && <span className="text-text-muted">{item.icon}</span>}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <span>{item.title}</span>
+                        {item.badge && (
+                          <span className="text-2xs px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 font-medium">
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
+                      {item.description && (
+                        <div className="text-[11px] text-text-muted mt-0.5 truncate">
+                          {item.description}
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                );
+              }
+
+              return (
+                <button
+                  key={item.title || idx}
+                  type="button"
+                  onClick={handleClick}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-text-secondary rounded-xl hover:bg-secondary-50 hover:text-text text-left transition-colors cursor-pointer"
+                >
+                  {item.icon && <span className="text-text-muted">{item.icon}</span>}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1">
+                      <span>{item.title}</span>
+                      {item.badge && (
+                        <span className="text-2xs px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 font-medium">
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+                    {item.description && (
+                      <div className="text-[11px] text-text-muted mt-0.5 truncate">
+                        {item.description}
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
           </div>
 
           {/* Divider */}

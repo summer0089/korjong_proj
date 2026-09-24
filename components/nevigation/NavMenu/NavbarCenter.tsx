@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
-import { NavMenuItem, NavbarCenterProps } from "./types";
+import { NavbarCenterProps } from "./types";
 
 /**
  * NavbarCenter Component
@@ -79,11 +79,10 @@ export function NavbarCenter({
                 key={item.menu_title}
                 href={item.href || "#"}
                 onClick={onItemClick}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-primary-50 text-primary-600 font-semibold"
-                    : "text-text hover:bg-secondary-50"
-                }`}
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${isActive
+                  ? "bg-primary-50 text-primary-600 font-semibold"
+                  : "text-text hover:bg-secondary-50"
+                  }`}
               >
                 {item.icon && <span>{item.icon}</span>}
                 <span>{item.menu_title}</span>
@@ -112,9 +111,8 @@ export function NavbarCenter({
                   <span>{item.menu_title}</span>
                 </div>
                 <ChevronDown
-                  className={`w-4 h-4 text-text-muted transition-transform duration-200 ${
-                    isTopOpen ? "rotate-180 text-primary-600" : ""
-                  }`}
+                  className={`w-4 h-4 text-text-muted transition-transform duration-200 ${isTopOpen ? "rotate-180 text-primary-600" : ""
+                    }`}
                 />
               </button>
 
@@ -144,9 +142,8 @@ export function NavbarCenter({
                               <span>{sub.title}</span>
                             </div>
                             <ChevronDown
-                              className={`w-3.5 h-3.5 text-text-muted transition-transform duration-200 ${
-                                isSubOpen ? "rotate-180 text-primary-600" : ""
-                              }`}
+                              className={`w-3.5 h-3.5 text-text-muted transition-transform duration-200 ${isSubOpen ? "rotate-180 text-primary-600" : ""
+                                }`}
                             />
                           </button>
 
@@ -159,11 +156,10 @@ export function NavbarCenter({
                                     key={nested.title}
                                     href={nested.href || "#"}
                                     onClick={onItemClick}
-                                    className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md transition-colors ${
-                                      isNestedActive
-                                        ? "font-semibold text-primary-600 bg-primary-50"
-                                        : "text-text-secondary hover:text-text hover:bg-surface"
-                                    }`}
+                                    className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md transition-colors ${isNestedActive
+                                      ? "font-semibold text-primary-600 bg-primary-50"
+                                      : "text-text-secondary hover:text-text hover:bg-surface"
+                                      }`}
                                   >
                                     {nested.icon && <span>{nested.icon}</span>}
                                     <span>{nested.title}</span>
@@ -183,11 +179,10 @@ export function NavbarCenter({
                         key={sub.title}
                         href={sub.href || "#"}
                         onClick={onItemClick}
-                        className={`flex items-center gap-2.5 px-3 py-2 text-xs rounded-lg transition-colors ${
-                          isSubActive
-                            ? "bg-primary-50 text-primary-600 font-semibold"
-                            : "text-text hover:bg-secondary-50"
-                        }`}
+                        className={`flex items-center gap-2.5 px-3 py-2 text-xs rounded-lg transition-colors ${isSubActive
+                          ? "bg-primary-50 text-primary-600 font-semibold"
+                          : "text-text hover:bg-secondary-50"
+                          }`}
                       >
                         {sub.icon && <span>{sub.icon}</span>}
                         <span>{sub.title}</span>
@@ -222,11 +217,10 @@ export function NavbarCenter({
             <Link
               key={item.menu_title}
               href={item.href || "#"}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? "text-primary-600 bg-primary-50 font-semibold"
-                  : "text-text-secondary hover:text-text hover:bg-secondary-100"
-              }`}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
+                ? "text-primary-600 bg-primary-50 font-semibold"
+                : "text-text-secondary hover:text-text hover:bg-secondary-100"
+                }`}
             >
               {item.icon && <span>{item.icon}</span>}
               <span>{item.menu_title}</span>
@@ -241,23 +235,24 @@ export function NavbarCenter({
 
         // เมนูหลักที่มี Dropdown
         return (
-          <div key={item.menu_title} className="relative">
+          <div
+            key={item.menu_title}
+            className={`relative ${isOpen ? "z-10" : ""}`}
+          >
             <button
               type="button"
               onClick={() => setActiveMenuIndex(isOpen ? null : menuIdx)}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                isOpen
-                  ? "text-primary-600 bg-primary-50"
-                  : "text-text-secondary hover:text-text hover:bg-secondary-100"
-              }`}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${isOpen
+                ? "text-primary-600 bg-primary-50"
+                : "text-text-secondary hover:text-text hover:bg-secondary-100"
+                }`}
               aria-expanded={isOpen}
             >
               {item.icon && <span>{item.icon}</span>}
               <span>{item.menu_title}</span>
               <ChevronDown
-                className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                  isOpen ? "rotate-180 text-primary-600" : "text-text-muted"
-                }`}
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? "rotate-180 text-primary-600" : "text-text-muted"
+                  }`}
               />
             </button>
 
@@ -283,22 +278,20 @@ export function NavbarCenter({
                           <button
                             type="button"
                             onClick={() => toggleAccordion(accordionKey)}
-                            className={`w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
-                              isAccordionOpen
-                                ? "bg-primary-50 text-primary-600"
-                                : "text-text hover:bg-secondary-50"
-                            }`}
+                            className={`w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${isAccordionOpen
+                              ? "bg-primary-50 text-primary-600"
+                              : "text-text hover:bg-secondary-50"
+                              }`}
                           >
                             <div className="flex items-center gap-2">
                               {sub.icon && <span>{sub.icon}</span>}
                               <span>{sub.title}</span>
                             </div>
                             <ChevronDown
-                              className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                                isAccordionOpen
-                                  ? "rotate-180 text-primary-600"
-                                  : "text-text-muted"
-                              }`}
+                              className={`w-3.5 h-3.5 transition-transform duration-200 ${isAccordionOpen
+                                ? "rotate-180 text-primary-600"
+                                : "text-text-muted"
+                                }`}
                             />
                           </button>
 
@@ -312,11 +305,10 @@ export function NavbarCenter({
                                     key={nested.title}
                                     href={nested.href || "#"}
                                     onClick={() => setActiveMenuIndex(null)}
-                                    className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs transition-colors ${
-                                      isNestedActive
-                                        ? "font-semibold text-primary-600 bg-primary-50"
-                                        : "text-text-secondary hover:text-text hover:bg-secondary-100"
-                                    }`}
+                                    className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs transition-colors ${isNestedActive
+                                      ? "font-semibold text-primary-600 bg-primary-50"
+                                      : "text-text-secondary hover:text-text hover:bg-secondary-100"
+                                      }`}
                                   >
                                     {nested.icon && <span>{nested.icon}</span>}
                                     <span>{nested.title}</span>
@@ -336,11 +328,10 @@ export function NavbarCenter({
                         key={sub.title}
                         href={sub.href || "#"}
                         onClick={() => setActiveMenuIndex(null)}
-                        className={`flex items-start gap-2.5 px-3 py-2 rounded-xl text-xs transition-colors ${
-                          isSubActive
-                            ? "bg-primary-50 text-primary-600 font-semibold"
-                            : "text-text hover:bg-secondary-50 hover:text-primary-700"
-                        }`}
+                        className={`flex items-start gap-2.5 px-3 py-2 rounded-xl text-xs transition-colors ${isSubActive
+                          ? "bg-primary-50 text-primary-600 font-semibold"
+                          : "text-text hover:bg-secondary-50 hover:text-primary-700"
+                          }`}
                       >
                         {sub.icon && (
                           <div className="mt-0.5 shrink-0 text-primary-500">

@@ -16,7 +16,7 @@ import {
 
 type SortDirection = "asc" | "desc" | null;
 
-interface DataTableColumn<T = object> {
+export interface DataTableColumn<T = object> {
   key: string;
   header: React.ReactNode;
   align?: "left" | "center" | "right";
@@ -26,7 +26,7 @@ interface DataTableColumn<T = object> {
   sorter?: (a: T, b: T) => number;
 }
 
-interface DataTableAction<T = object> {
+export interface DataTableAction<T = object> {
   name: string;
   label?: string;
   icon?: React.ReactNode;
@@ -37,7 +37,7 @@ interface DataTableAction<T = object> {
   disabled?: (record: T, index: number) => boolean;
 }
 
-interface DataTableActionOptions<T = object> {
+export interface DataTableActionOptions<T = object> {
   header?: React.ReactNode;
   width?: string;
   align?: "left" | "center" | "right";
@@ -48,7 +48,7 @@ interface DataTableActionOptions<T = object> {
   customActions?: DataTableAction<T>[];
 }
 
-interface DataTableProps<T = object> {
+export interface DataTableProps<T = object> {
   data: T[];
   columns: DataTableColumn<T>[];
   actions?: DataTableActionOptions<T>;
@@ -268,8 +268,8 @@ export function DataTable<T extends object = Record<string, unknown>>({
                       isColumnSortable && handleSort(col.key, col.sortable)
                     }
                     className={`py-3.5 px-4 text-xs font-semibold tracking-wider uppercase transition-colors select-none ${isColumnSortable
-                        ? "cursor-pointer hover:bg-secondary-100/80 group"
-                        : ""
+                      ? "cursor-pointer hover:bg-secondary-100/80 group"
+                      : ""
                       } ${isSorted
                         ? "text-primary-600 bg-primary-50/50"
                         : "text-text-secondary"
@@ -282,10 +282,10 @@ export function DataTable<T extends object = Record<string, unknown>>({
                   >
                     <div
                       className={`inline-flex items-center gap-1.5 ${col.align === "center"
-                          ? "justify-center"
-                          : col.align === "right"
-                            ? "justify-end"
-                            : "justify-start"
+                        ? "justify-center"
+                        : col.align === "right"
+                          ? "justify-end"
+                          : "justify-start"
                         }`}
                     >
                       <span>{col.header}</span>
@@ -311,10 +311,10 @@ export function DataTable<T extends object = Record<string, unknown>>({
                 <th
                   style={{ width: actions?.width || "140px" }}
                   className={`py-3.5 px-4 text-xs font-semibold text-text-secondary tracking-wider uppercase ${actions?.align === "left"
-                      ? "text-left"
-                      : actions?.align === "right"
-                        ? "text-right"
-                        : "text-center"
+                    ? "text-left"
+                    : actions?.align === "right"
+                      ? "text-right"
+                      : "text-center"
                     }`}
                 >
                   {actions?.header || "จัดการ"}
@@ -383,10 +383,10 @@ export function DataTable<T extends object = Record<string, unknown>>({
                         <td
                           key={String(col.key) || colIndex}
                           className={`py-3.5 px-4 ${col.align === "center"
-                              ? "text-center"
-                              : col.align === "right"
-                                ? "text-right"
-                                : "text-left"
+                            ? "text-center"
+                            : col.align === "right"
+                              ? "text-right"
+                              : "text-left"
                             }`}
                         >
                           {renderedContent}
@@ -398,10 +398,10 @@ export function DataTable<T extends object = Record<string, unknown>>({
                       <td className="py-3 px-4">
                         <div
                           className={`flex items-center gap-1.5 ${actions?.align === "left"
-                              ? "justify-start"
-                              : actions?.align === "right"
-                                ? "justify-end"
-                                : "justify-center"
+                            ? "justify-start"
+                            : actions?.align === "right"
+                              ? "justify-end"
+                              : "justify-center"
                             }`}
                         >
                           {/* Built-in Edit Button */}

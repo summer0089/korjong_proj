@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import NavBar, { NavMenuItem } from "@/components/nevigation/NavMenu/Navbar";
+import NavBar, { NavMenuItem, UserMenuItem } from "@/components/nevigation/NavMenu/Navbar";
 import Footer from "@/components/nevigation/Footer";
-import { BarChart3, Building2, Calendar, CalendarDays, DoorClosed, Home, Layers, PlusCircle, Users } from "lucide-react";
+import { BarChart3, Building2, Calendar, CalendarDays, DoorClosed, Home, Layers, PlusCircle, User, Users } from "lucide-react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,12 +61,12 @@ const DEFAULT_MENUS: NavMenuItem[] = [
         submenu: [
           {
             title: "หน่วยงานภายใน",
-            href: "/c/departments",
+            href: "/i/department",
             icon: <Building2 className="w-3.5 h-3.5 text-blue-500" />,
           },
           {
             title: "ห้องประชุมและสถานที่",
-            href: "/c/rooms",
+            href: "/i/meetingroom",
             icon: <DoorClosed className="w-3.5 h-3.5 text-blue-500" />,
           },
         ],
@@ -90,13 +90,26 @@ const DEFAULT_MENUS: NavMenuItem[] = [
       },
       {
         title: "จัดการผู้ใช้งานระบบ",
-        href: "/c/users",
+        href: "/u/management",
         icon: <Users className="w-4 h-4 text-slate-600" />,
         description: "จัดการสิทธิ์และบัญชีผู้ใช้งาน",
       },
     ],
   },
 ];
+
+const DEFAULT_USER_MENUS: UserMenuItem[] = [
+  {
+    title: "แก้ไขข้อมูล",
+    href: "/u/profile",
+    icon: <User className="w-4 h-4 text-text-muted" />,
+  },
+  {
+    title: "ดูรายการที่เคยจองห้องประชุม",
+    href: "/u/bookings",
+    icon: <CalendarDays className="w-4 h-4 text-text-muted" />,
+  },
+]
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -107,6 +120,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <NavBar
           menus={DEFAULT_MENUS}
+          userMenus={DEFAULT_USER_MENUS}
         />
         <div className="flex-1">{children}</div>
         <Footer />

@@ -60,7 +60,7 @@ export const PasswordBox = forwardRef<HTMLInputElement, PasswordBoxProps>(
             aria-describedby={error && inputId ? `${inputId}-error` : undefined}
             className={`input-field py-3 px-4 ${showTogglePassword ? "pr-11" : "pr-4"
               } rounded-lg disabled:bg-surface-sunken disabled:text-text-muted disabled:cursor-not-allowed ${error
-                ? "border-unavailable-500 focus:ring-1 focus:ring-unavailable-500 focus:border-unavailable-500"
+                ? "border-unavailable-500 focus:ring-1 focus:ring-unavailable-500"
                 : "hover:border-border-strong"
               } ${className}`}
             {...rest}

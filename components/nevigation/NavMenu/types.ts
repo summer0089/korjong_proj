@@ -35,6 +35,17 @@ export interface NavMenuItem {
   submenu?: SubMenuItem[];
 }
 
+/** ข้อมูลรายการเมนูสำหรับผู้ใช้งาน (User Panel Menu Item) */
+export interface UserMenuItem {
+  title: string;
+  href?: string;
+  icon?: React.ReactNode;
+  badge?: string;
+  description?: string;
+  roles?: string[];
+  onClick?: () => void;
+}
+
 /** Props สำหรับ NavbarLogo */
 export interface NavbarLogoProps {
   logoSrc?: string;
@@ -58,6 +69,8 @@ export interface NavbarCenterProps {
 /** Props สำหรับ NavbarUserPanel */
 export interface NavbarUserPanelProps {
   user?: UserProfile | null;
+  menus?: UserMenuItem[];
+  userMenus?: UserMenuItem[];
   isLoggedIn?: boolean;
   onLogout?: () => void;
   isMobile?: boolean;
@@ -73,6 +86,7 @@ export interface NavBarProps {
   title?: string;
   badge?: string;
   menus?: NavMenuItem[];
+  userMenus?: UserMenuItem[];
   user?: UserProfile | null;
   isLoggedIn?: boolean;
   onLogout?: () => void;

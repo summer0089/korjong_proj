@@ -11,6 +11,7 @@ import {
   UserProfile,
   NavMenuItem,
   SubMenuItem,
+  UserMenuItem,
   NavbarLogoProps,
   NavbarCenterProps,
   NavbarUserPanelProps,
@@ -22,6 +23,7 @@ export type {
   UserProfile,
   NavMenuItem,
   SubMenuItem,
+  UserMenuItem,
   NavbarLogoProps,
   NavbarCenterProps,
   NavbarUserPanelProps,
@@ -55,6 +57,7 @@ export function NavBar({
   title = "Korjong : ขอจอง",
   badge = "ระบบจองห้องประชุม",
   menus = DEFAULT_MENUS,
+  userMenus,
   user = DEFAULT_USER,
   isLoggedIn = true,
   onLogout,
@@ -75,11 +78,13 @@ export function NavBar({
   // อัปเดต currentUser เมื่อ props เปลี่ยน
   useEffect(() => {
     setCurrentUser(isLoggedIn ? user : null);
+    return () => setCurrentUser(null);
+
   }, [isLoggedIn, user]);
 
   // ปิด mobile drawer เมื่อเปลี่ยนหน้า
   useEffect(() => {
-    setIsMobileOpen(false);
+    return () => setIsMobileOpen(false);
   }, [pathname]);
 
   // ตรวจสอบหน้าที่ต้องการซ่อน Navbar ตาม hiddenPaths
@@ -133,6 +138,7 @@ export function NavBar({
         <div className="flex items-center gap-3 shrink-0 ml-auto">
           <NavbarUserPanel
             user={currentUser}
+            menus={userMenus}
             isLoggedIn={Boolean(currentUser)}
             onLogout={handleLogout}
           />
@@ -161,6 +167,7 @@ export function NavBar({
           {/* ข้อมูลและเมนูผู้ใช้งานบน Mobile */}
           <NavbarUserPanel
             user={currentUser}
+            menus={userMenus}
             isLoggedIn={Boolean(currentUser)}
             onLogout={handleLogout}
             isMobile
