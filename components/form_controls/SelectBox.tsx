@@ -1,13 +1,13 @@
 import React, { forwardRef } from "react";
 import { AlertCircle, ChevronDown } from "lucide-react";
 
-interface SelectOption {
+export interface SelectOption {
   value: string;
   label: string;
   disabled?: boolean;
 }
 
-interface SelectBoxProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+export interface SelectBoxProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
   helperText?: string;
@@ -59,8 +59,8 @@ export const SelectBox = forwardRef<HTMLSelectElement, SelectBoxProps>(
             aria-invalid={!!error}
             aria-describedby={error && selectId ? `${selectId}-error` : undefined}
             className={`input-field py-3 px-4 pr-10 rounded-lg appearance-none disabled:bg-surface-sunken disabled:text-text-muted disabled:cursor-not-allowed ${error
-                ? "border-unavailable-500 focus:ring-1 focus:ring-unavailable-500 focus:border-unavailable-500"
-                : "hover:border-border-strong"
+              ? "border-unavailable-500 focus:ring-1 focus:ring-unavailable-500 focus:border-unavailable-500"
+              : "hover:border-border-strong"
               } ${!value ? "text-text-muted" : "text-text"} ${className}`}
             {...rest}
           >

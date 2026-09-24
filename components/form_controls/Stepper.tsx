@@ -1,13 +1,13 @@
 import React from "react";
 import { Check } from "lucide-react";
 
-interface StepItem {
+export interface StepItem {
   title: string;
   description?: string;
   icon?: React.ReactNode;
 }
 
-interface StepperProps {
+export interface StepperProps {
   steps: StepItem[];
   currentStep: number; // 1-based index
   onStepClick?: (stepNumber: number) => void;
@@ -47,7 +47,7 @@ export function Stepper({
                   aria-hidden="true"
                 >
                   <div
-                    className={`h-full transition-all duration-300 ${stepNumber < currentStep ? "bg-primary" : "bg-border"
+                    className={`h-full transition-all duration-300 ${stepNumber < currentStep ? "bg-primary-600" : "bg-border"
                       }`}
                   />
                 </div>
@@ -75,10 +75,10 @@ export function Stepper({
                 <div className="rounded-full bg-surface p-0.5">
                   <div
                     className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm transition-all duration-200 shrink-0 ${isCompleted
-                        ? "bg-primary text-text-inverse shadow-sm ring-4 ring-primary/10"
-                        : isCurrent
-                          ? "bg-surface border-2 border-primary text-primary shadow-md ring-4 ring-primary/20 scale-105"
-                          : "bg-surface border-2 border-border-strong text-text-muted"
+                      ? "bg-primary-600 text-text-inverse shadow-xs ring-4 ring-primary-100"
+                      : isCurrent
+                        ? "bg-surface border-2 border-primary-600 text-primary-600 shadow-sm ring-4 ring-primary-100 scale-105"
+                        : "bg-surface border-2 border-border-strong text-text-muted"
                       }`}
                     aria-current={isCurrent ? "step" : undefined}
                   >
@@ -98,21 +98,21 @@ export function Stepper({
                 <div className="mt-2 flex flex-col items-center px-1">
                   <span
                     className={`text-[11px] sm:text-xs font-bold leading-tight transition-colors ${isCurrent
-                        ? "text-primary"
-                        : isCompleted
-                          ? "text-text group-hover:text-primary"
-                          : "text-text-muted"
+                      ? "text-primary-600 font-semibold"
+                      : isCompleted
+                        ? "text-text group-hover:text-primary-600"
+                        : "text-text-muted"
                       }`}
                   >
                     {step.title}
                   </span>
                   {step.description && (
                     <span
-                      className={`text-[10px] sm:text-[11px] leading-tight mt-0.5 hidden sm:block ${isCurrent
-                          ? "text-text-muted font-medium"
-                          : isCompleted
-                            ? "text-text-muted"
-                            : "text-text-muted/80"
+                      className={`text-2xs sm:text-[11px] leading-tight mt-0.5 hidden sm:block ${isCurrent
+                        ? "text-text-secondary font-medium"
+                        : isCompleted
+                          ? "text-text-muted"
+                          : "text-text-muted/80"
                         }`}
                     >
                       {step.description}

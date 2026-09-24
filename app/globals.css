@@ -9,6 +9,7 @@
 /* ─── Custom Theme Tokens ─── */
 @theme {
   /* ── Primary: Deep Professional Blue ── */
+  --color-primary:     #2563eb;
   --color-primary-50:  #eff6ff;
   --color-primary-100: #dbeafe;
   --color-primary-200: #bfdbfe;

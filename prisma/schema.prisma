@@ -11,6 +11,7 @@ model Employee {
 
   role         Roles                      @default(USER)
   password     String
+  isActive     Boolean                    @default(true)
 
   createdAt    TimestamptzString          @default(now())
   updatedAt    temporal.updatedAtString()

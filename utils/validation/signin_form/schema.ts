@@ -5,7 +5,7 @@ export const signinSchema = z.object({
         .string()
         .trim()
         .min(1, "กรุณากรอกอีเมล")
-        .pipe(z.string().email("รูปแบบอีเมลไม่ถูกต้อง")),
+        .pipe(z.email("รูปแบบอีเมลไม่ถูกต้อง")),
     password: z
         .string()
         .min(8, "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร"),
