@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { CarouselItem } from "@/utils/types/carousel_item";
-import Carousel from "./carousel";
+import { CarouselItem } from "@/components/carousel/type";
+import Carousel from "@/components/carousel/CarouselCard";
 
 interface CarouselContainerProps {
   items: CarouselItem[];

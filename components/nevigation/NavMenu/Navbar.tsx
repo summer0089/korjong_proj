@@ -58,7 +58,7 @@ export function NavBar({
   user = DEFAULT_USER,
   isLoggedIn = true,
   onLogout,
-  hiddenPaths = ["/u/signin", "/u/signup", "/u/forgot-password"],
+  hiddenPaths = ["/u/signin", "/u/signup", "/u/forgot-password", "/u/forgot_password"],
   hidden = false,
   className = "",
 }: NavBarProps) {

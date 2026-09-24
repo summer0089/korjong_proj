@@ -16,7 +16,7 @@ export function Footer({
   organizationName = "เทศบาลเมืองแสนสุข",
   copyrightYear,
   text,
-  hiddenPaths = [],
+  hiddenPaths = ["/u/signin", "/u/signup", "/u/forgot-password", "/u/forgot_password"],
   hidden = false,
   className = "",
 }: FooterProps) {

@@ -1,3 +1,6 @@
+"use client";
 import { redirect } from "next/navigation";
 
-redirect("p/home");
+export default function IndexPage() {
+    redirect('/p/home');
+}
