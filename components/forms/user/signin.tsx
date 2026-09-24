@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldCheck, LogIn, ArrowRight } from "lucide-react";
 import { signinSchema } from "@/utils/validation/signin_form/schema";
 import { TextBox } from "@/components/form_controls/TextBox";
@@ -16,7 +17,11 @@ interface FieldErrors {
   password?: string;
 }
 
-export default function SigninForm() {
+function SigninFormContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -25,7 +30,7 @@ export default function SigninForm() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setGeneralError("");
     setFieldErrors({});
@@ -50,11 +55,53 @@ export default function SigninForm() {
 
     setLoading(true);
 
-    // Mock API sign-in delay
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          password,
+          rememberMe,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setGeneralError(data.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ กรุณาลองใหม่อีกครั้ง");
+        setLoading(false);
+        return;
+      }
+
+      // เข้าสู่ระบบสำเร็จ
       setSuccess(true);
-    }, 1500);
+      setLoading(false);
+
+      // แจ้งเตือน Navbar และคอมโพเนนต์อื่นว่าสถานะ Auth มีการเปลี่ยนแปลง
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("korjong-auth-change"));
+      }
+
+      // นำทางไปยัง callbackUrl หรือหน้าหลัก
+      const target =
+        callbackUrl &&
+        !callbackUrl.startsWith("/u/signin") &&
+        !callbackUrl.startsWith("/u/signup")
+          ? callbackUrl
+          : "/";
+
+      setTimeout(() => {
+        router.push(target);
+        router.refresh();
+      }, 1000);
+    } catch (err: unknown) {
+      console.error("Sign in error:", err);
+      setGeneralError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง");
+      setLoading(false);
+    }
   };
 
   return (
@@ -63,7 +110,7 @@ export default function SigninForm() {
         /* Success Animation and Message */
         <MessageBox
           title="ลงชื่อเข้าใช้งานสำเร็จ!"
-          text="ยินดีต้อนรับเข้าสู่ระบบ ขณะนี้ระบบกำลังนำทางคุณไปยังหน้าแผงควบคุมหลัก..."
+          text="ยินดีต้อนรับเข้าสู่ระบบ ขณะนี้ระบบกำลังนำทางคุณไปยังหน้าหลัก..."
           variant="success"
           showSpinner={true}
         />
@@ -176,5 +223,13 @@ export default function SigninForm() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SigninForm() {
+  return (
+    <Suspense fallback={<div className="text-center py-8 text-text-muted">กำลังโหลดแบบฟอร์ม...</div>}>
+      <SigninFormContent />
+    </Suspense>
   );
 }

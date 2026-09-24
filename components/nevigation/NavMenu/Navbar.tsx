@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { usePathname } from "next/navigation";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { NavbarLogo } from "./NavbarLogo";
 import { NavbarCenter } from "./NavbarCenter";
@@ -35,13 +35,27 @@ export { NavbarLogo, NavbarCenter, NavbarUserPanel };
 // Default Menu Configuration
 const DEFAULT_MENUS: NavMenuItem[] = [];
 
-// Default User Profile
-const DEFAULT_USER: UserProfile = {
-  name: "เจ้าหน้าที่ผู้ดูแลระบบ",
-  email: "admin@korjong.local",
-  role: "ผู้ดูแลระบบ (Admin)",
-  profile_image: "/user_avatar/test_avatar.jpg",
-};
+/**
+ * แปลงข้อมูลพนักงานจาก Session เป็น UserProfile สำหรับ Navbar
+ */
+function mapSessionToUserProfile(emp: any): UserProfile {
+  const firstName = emp.firstname || "";
+  const lastName = emp.lastname || "";
+  const name = `${firstName} ${lastName}`.trim() || emp.email;
+
+  return {
+    id: emp.id,
+    name,
+    firstName: emp.firstname,
+    lastName: emp.lastname,
+    email: emp.email,
+    role: emp.role,
+    position: emp.position,
+    department: emp.department,
+    phoneNumber: emp.phoneNumber,
+    profile_image: emp.profileImage || null,
+  };
+}
 
 /**
  * NavBar Component (Container หลัก)
@@ -58,33 +72,69 @@ export function NavBar({
   badge = "ระบบจองห้องประชุม",
   menus = DEFAULT_MENUS,
   userMenus,
-  user = DEFAULT_USER,
-  isLoggedIn = true,
+  user,
+  isLoggedIn,
   onLogout,
   hiddenPaths = ["/u/signin", "/u/signup", "/u/forgot-password", "/u/forgot_password"],
   hidden = false,
   className = "",
 }: NavBarProps) {
   const pathname = usePathname();
+  const router = useRouter();
 
   // สถานะเปิด/ปิด Mobile Drawer
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // สถานะผู้ใช้งานปัจจุบัน
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(
-    isLoggedIn ? user : null
+    user !== undefined ? (isLoggedIn ? user : null) : null
   );
 
-  // อัปเดต currentUser เมื่อ props เปลี่ยน
-  useEffect(() => {
-    setCurrentUser(isLoggedIn ? user : null);
-    return () => setCurrentUser(null);
+  // ฟังก์ชันดึงสถานะ Session จาก Cookie ผ่าน API
+  const refreshSession = useCallback(async () => {
+    try {
+      const res = await fetch("/api/auth/session/get", {
+        cache: "no-store",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.isLoggedIn && data.user) {
+          setCurrentUser(mapSessionToUserProfile(data.user));
+          return;
+        }
+      }
+      setCurrentUser(null);
+    } catch (err) {
+      console.error("Failed to check session:", err);
+      setCurrentUser(null);
+    }
+  }, []);
 
-  }, [isLoggedIn, user]);
+  // ตรวจสอบ Session จาก Cookie และ Props
+  useEffect(() => {
+    // หากมีการส่ง user มาทาง props แบบระบุชัดเจน ให้ใช้ค่านั้น
+    if (user !== undefined && isLoggedIn !== undefined) {
+      setCurrentUser(isLoggedIn ? user : null);
+      return;
+    }
+
+    // ตรวจสอบ Session จาก Cookie
+    refreshSession();
+
+    // ฟัง event เมื่อมีการ login หรือ logout จากหน้าอื่น
+    const handleAuthChange = () => {
+      refreshSession();
+    };
+
+    window.addEventListener("korjong-auth-change", handleAuthChange);
+    return () => {
+      window.removeEventListener("korjong-auth-change", handleAuthChange);
+    };
+  }, [pathname, user, isLoggedIn, refreshSession]);
 
   // ปิด mobile drawer เมื่อเปลี่ยนหน้า
   useEffect(() => {
-    return () => setIsMobileOpen(false);
+    setIsMobileOpen(false);
   }, [pathname]);
 
   // ตรวจสอบหน้าที่ต้องการซ่อน Navbar ตาม hiddenPaths
@@ -103,11 +153,24 @@ export function NavBar({
   }
 
   // ฟังก์ชั่น Logout กลาง
-  const handleLogout = () => {
-    if (onLogout) {
-      onLogout();
-    } else {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/signout", {
+        method: "POST",
+      });
+    } catch (err) {
+      console.error("Signout error:", err);
+    } finally {
       setCurrentUser(null);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("korjong-auth-change"));
+      }
+      if (onLogout) {
+        onLogout();
+      } else {
+        router.push("/u/signin");
+        router.refresh();
+      }
     }
   };
 

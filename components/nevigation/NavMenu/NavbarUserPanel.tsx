@@ -7,6 +7,16 @@ import { usePathname } from "next/navigation";
 import { ChevronDown, User, CalendarDays, LogOut, LogIn } from "lucide-react";
 import { Button } from "@/components/form_controls/Button";
 import { NavbarUserPanelProps, UserMenuItem } from "./types";
+import { getAvatarProps } from "@/utils/helper/avatar";
+
+/** แปลงชื่อ Role ให้อ่านง่าย */
+function formatRoleName(role?: string): string {
+  if (!role) return "ผู้ใช้งานทั่วไป";
+  if (role === "ADMIN") return "ผู้ดูแลระบบ (Admin)";
+  if (role === "APPROVER") return "ผู้อนุมัติ (Approver)";
+  if (role === "USER") return "ผู้ใช้งานทั่วไป";
+  return role;
+}
 
 /** เมนูเริ่มต้นสำหรับผู้ใช้งาน */
 export const DEFAULT_USER_MENUS: UserMenuItem[] = [
@@ -80,6 +90,10 @@ export function NavbarUserPanel({
   };
 
   const isUserAuthenticated = isLoggedIn && user !== null && user !== undefined;
+  const avatarProps = user
+    ? getAvatarProps(user.firstName || user.name, user.email || user.id)
+    : null;
+  const displayRole = user?.role ? formatRoleName(user.role) : "";
 
   // =========================================================================
   // MOBILE VIEW
@@ -105,7 +119,17 @@ export function NavbarUserPanel({
       <div className={className}>
         {/* สรุปข้อมูลผู้ใช้ในแถบมือถือ */}
         <div className="flex items-center gap-3 p-3 bg-secondary-50/70 rounded-xl border border-secondary-100 mb-2">
-          <div className="w-10 h-10 rounded-full overflow-hidden bg-linear-to-tr from-primary-600 to-accent-600 shrink-0 flex items-center justify-center text-text-inverse font-semibold text-xs shadow-xs">
+          <div
+            className="w-10 h-10 rounded-full overflow-hidden shrink-0 flex items-center justify-center text-text-inverse font-semibold text-sm shadow-xs"
+            style={
+              user.profile_image
+                ? undefined
+                : {
+                    backgroundColor: avatarProps?.backgroundColor,
+                    color: avatarProps?.color,
+                  }
+            }
+          >
             {user.profile_image ? (
               <Image
                 src={user.profile_image}
@@ -115,7 +139,7 @@ export function NavbarUserPanel({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span>{user.name.charAt(0)}</span>
+              <span>{avatarProps?.initial}</span>
             )}
           </div>
           <div className="flex-1 min-w-0">
@@ -123,7 +147,7 @@ export function NavbarUserPanel({
               {user.name}
             </div>
             <div className="text-2xs text-text-muted truncate">
-              {user.role || user.email || "ผู้ใช้งาน"}
+              {displayRole || user.email || "ผู้ใช้งาน"}
             </div>
           </div>
         </div>
@@ -217,7 +241,17 @@ export function NavbarUserPanel({
         aria-label="User profile menu"
         aria-expanded={isUserMenuOpen}
       >
-        <div className="relative w-9 h-9 rounded-full overflow-hidden bg-linear-to-tr from-primary-600 to-accent-600 ring-2 ring-secondary-200 group-hover:ring-primary-500 transition-all flex items-center justify-center text-text-inverse font-semibold text-xs shadow-xs">
+        <div
+          className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-secondary-200 group-hover:ring-primary-500 transition-all flex items-center justify-center text-text-inverse font-semibold text-xs shadow-xs"
+          style={
+            user.profile_image
+              ? undefined
+              : {
+                  backgroundColor: avatarProps?.backgroundColor,
+                  color: avatarProps?.color,
+                }
+          }
+        >
           {user.profile_image ? (
             <Image
               src={user.profile_image}
@@ -227,7 +261,7 @@ export function NavbarUserPanel({
               className="w-full h-full object-cover"
             />
           ) : (
-            <span>{user.name.charAt(0)}</span>
+            <span>{avatarProps?.initial}</span>
           )}
         </div>
 
@@ -236,13 +270,14 @@ export function NavbarUserPanel({
             {user.name}
           </span>
           <span className="text-2xs text-text-muted truncate max-w-32.5">
-            {user.role || user.email || "ผู้ใช้งาน"}
+            {displayRole || user.email || "ผู้ใช้งาน"}
           </span>
         </div>
 
         <ChevronDown
-          className={`hidden lg:block w-3.5 h-3.5 text-text-muted transition-transform duration-200 ${isUserMenuOpen ? "rotate-180 text-primary-600" : ""
-            }`}
+          className={`hidden lg:block w-3.5 h-3.5 text-text-muted transition-transform duration-200 ${
+            isUserMenuOpen ? "rotate-180 text-primary-600" : ""
+          }`}
         />
       </button>
 
@@ -251,7 +286,17 @@ export function NavbarUserPanel({
         <div className="absolute right-0 mt-2 w-72 bg-surface rounded-2xl shadow-xl border border-secondary-200 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
           {/* Header ข้อมูลผู้ใช้ */}
           <div className="px-4 py-3 border-b border-secondary-100 flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full overflow-hidden bg-linear-to-tr from-primary-600 to-accent-600 shrink-0 flex items-center justify-center text-text-inverse font-bold text-sm ring-2 ring-primary-100">
+            <div
+              className="w-11 h-11 rounded-full overflow-hidden shrink-0 flex items-center justify-center text-text-inverse font-bold text-sm ring-2 ring-primary-100 shadow-xs"
+              style={
+                user.profile_image
+                  ? undefined
+                  : {
+                      backgroundColor: avatarProps?.backgroundColor,
+                      color: avatarProps?.color,
+                    }
+              }
+            >
               {user.profile_image ? (
                 <Image
                   src={user.profile_image}
@@ -261,7 +306,7 @@ export function NavbarUserPanel({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span>{user.name.charAt(0)}</span>
+                <span>{avatarProps?.initial}</span>
               )}
             </div>
             <div className="flex-1 min-w-0">
@@ -273,9 +318,9 @@ export function NavbarUserPanel({
                   {user.email}
                 </div>
               )}
-              {user.role && (
+              {displayRole && (
                 <div className="inline-block text-2xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full mt-0.5 border border-primary-100">
-                  {user.role}
+                  {displayRole}
                 </div>
               )}
             </div>

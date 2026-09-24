@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar, { NavMenuItem, UserMenuItem } from "@/components/nevigation/NavMenu/Navbar";
 import Footer from "@/components/nevigation/Footer";
-import { BarChart3, Building2, Calendar, CalendarDays, DoorClosed, Home, Layers, PlusCircle, User, Users } from "lucide-react";
+import { BarChart3, Building2, Calendar, CalendarDays, DoorClosed, Home, Key, Layers, PlusCircle, User, Users } from "lucide-react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -100,9 +100,14 @@ const DEFAULT_MENUS: NavMenuItem[] = [
 
 const DEFAULT_USER_MENUS: UserMenuItem[] = [
   {
-    title: "แก้ไขข้อมูล",
+    title: "แก้ไขข้อมูลส่วนตัว",
     href: "/u/profile",
     icon: <User className="w-4 h-4 text-text-muted" />,
+  },
+  {
+    title: "เปลี่ยนรหัสผ่าน",
+    href: "/u/change-password",
+    icon: <Key className="w-4 h-4 text-text-muted" />,
   },
   {
     title: "ดูรายการที่เคยจองห้องประชุม",
