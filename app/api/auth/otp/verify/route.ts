@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { verifyStatelessOtpToken, OTP_COOKIE_NAME } from "@/utils/helper/otp";
+import { verifyStatelessOtpToken, createPasswordResetToken, OTP_COOKIE_NAME } from "@/utils/helper/otp";
 
 const verifyOtpSchema = z.object({
   email: z
@@ -75,10 +75,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // สร้าง resetToken อายุ 15 นาที
+    const resetToken = createPasswordResetToken(normalizedEmail, 15);
+
     // ยืนยันสำเร็จ เคลียร์ Cookie
     const response = NextResponse.json({
       success: true,
-      message: "ยืนยันอีเมลสำเร็จ",
+      message: "ยืนยันรหัส OTP สำเร็จ",
+      resetToken,
     });
 
     response.cookies.delete(OTP_COOKIE_NAME);

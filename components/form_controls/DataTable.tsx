@@ -43,6 +43,8 @@ export interface DataTableActionOptions<T = object> {
   align?: "left" | "center" | "right";
   onEdit?: (record: T, index: number) => void;
   onDelete?: (record: T, index: number) => void;
+  isEditDisabled?: (record: T, index: number) => boolean;
+  isDeleteDisabled?: (record: T, index: number) => boolean;
   editLabel?: string;
   deleteLabel?: string;
   customActions?: DataTableAction<T>[];
@@ -409,6 +411,11 @@ export function DataTable<T extends object = Record<string, unknown>>({
                             <Button
                               variant="ghost"
                               size="sm"
+                              disabled={
+                                actions.isEditDisabled
+                                  ? actions.isEditDisabled(record, globalIndex)
+                                  : false
+                              }
                               className="p-1.5! text-text-secondary hover:text-primary-600 hover:bg-primary-50 rounded-lg transition"
                               title={actions.editLabel || "แก้ไขข้อมูล"}
                               onClick={() => actions.onEdit!(record, globalIndex)}
@@ -421,6 +428,11 @@ export function DataTable<T extends object = Record<string, unknown>>({
                             <Button
                               variant="ghost"
                               size="sm"
+                              disabled={
+                                actions.isDeleteDisabled
+                                  ? actions.isDeleteDisabled(record, globalIndex)
+                                  : false
+                              }
                               className="p-1.5! text-text-secondary hover:text-unavailable-600 hover:bg-unavailable-50 rounded-lg transition"
                               title={actions.deleteLabel || "ลบข้อมูล"}
                               onClick={() =>

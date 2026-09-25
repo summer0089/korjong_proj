@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import NavBar, { NavMenuItem, UserMenuItem } from "@/components/nevigation/NavMenu/Navbar";
+import NavBar, { NavMenuItem, ProtectedPath, UserMenuItem } from "@/components/nevigation/NavMenu/Navbar";
 import Footer from "@/components/nevigation/Footer";
 import { BarChart3, Building2, Calendar, CalendarDays, DoorClosed, Home, Key, Layers, PlusCircle, User, Users } from "lucide-react";
 
@@ -32,19 +32,20 @@ const DEFAULT_MENUS: NavMenuItem[] = [
     submenu: [
       {
         title: "จองห้องประชุมใหม่",
-        href: "/bookings/new",
+        href: "/p/booking/new",
         icon: <PlusCircle className="w-4 h-4 text-[#1a73e8]" />,
         description: "เลือกห้องประชุม วันและช่วงเวลาที่ต้องการ",
       },
-      {
+      /*{
+        //ให้แสดงในหน้าหลัก p/home
         title: "ปฏิทินการใช้ห้องประชุม",
         href: "/calendar",
         icon: <Calendar className="w-4 h-4 text-emerald-600" />,
         description: "ตรวจสอบตารางเวลาห้องประชุมแบบเรียลไทม์",
-      },
+      },*/
       {
         title: "รายการจองของฉัน",
-        href: "/u/bookings",
+        href: "/u/my-booking",
         icon: <CalendarDays className="w-4 h-4 text-purple-600" />,
         description: "ตรวจสอบสถานะและประวัติการจองห้องประชุม",
       },
@@ -90,7 +91,7 @@ const DEFAULT_MENUS: NavMenuItem[] = [
       },
       {
         title: "จัดการผู้ใช้งานระบบ",
-        href: "/u/management",
+        href: "/a/employee-list",
         icon: <Users className="w-4 h-4 text-slate-600" />,
         description: "จัดการสิทธิ์และบัญชีผู้ใช้งาน",
       },
@@ -111,8 +112,47 @@ const DEFAULT_USER_MENUS: UserMenuItem[] = [
   },
   {
     title: "ดูรายการที่เคยจองห้องประชุม",
-    href: "/u/bookings",
+    href: "/p/my-booking",
     icon: <CalendarDays className="w-4 h-4 text-text-muted" />,
+  },
+]
+
+const PROTECTED_PATHS: ProtectedPath[] = [
+  {
+    path: "/p/booking/new",
+    roles: ["USER", "ADMIN", "APPROVER"],
+  },
+  {
+    path: "/p/booking/cancel",
+    roles: ["USER", "ADMIN", "APPROVER"],
+  },
+  {
+    path: "/p/booking/edit",
+    roles: ["USER", "ADMIN", "APPROVER"],
+  },
+  {
+    path: "/u/my-booking",
+    roles: ["USER", "ADMIN", "APPROVER"],
+  },
+  {
+    path: "/u/profile",
+    roles: ["USER", "ADMIN", "APPROVER"],
+  },
+  {
+    path: "/u/change-password",
+    roles: ["USER", "ADMIN", "APPROVER"],
+  },
+  {
+    path: "/i/department",
+    roles: ["ADMIN"],
+  },
+  {
+    path: "/i/meetingroom",
+    roles: ["ADMIN"],
+  },
+  {
+    path: "/a/employee-list",
+    roles: ["ADMIN"],
   },
 ]
 
@@ -126,9 +166,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <NavBar
           menus={DEFAULT_MENUS}
           userMenus={DEFAULT_USER_MENUS}
+          protectedPaths={PROTECTED_PATHS}
         />
         <div className="flex-1">{children}</div>
-        <Footer />
+        <Footer
+          organizationName="เทศบาลเมืองแสนสุข"
+          copyrightYear={new Date().getFullYear() + 543}
+        />
       </body>
     </html>
   );

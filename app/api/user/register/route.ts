@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
 import bcrypt from "bcryptjs";
-import { registerUserSchema } from "@/utils/validation/signup_form/schema";
+import { RegisterUserSchema } from "@/utils/validation/signup_form/schema";
 
 // POST /api/user/register - บันทึกข้อมูลผู้ใช้
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
 
-        const validation = registerUserSchema.safeParse(body);
+        const validation = RegisterUserSchema.safeParse(body);
         if (!validation.success) {
             return NextResponse.json(
                 {

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
-import { NavbarCenterProps } from "./types";
+import { NavbarCenterProps, NavMenuItem, SubMenuItem, ProtectedPath } from "./types";
 
 /**
  * NavbarCenter Component
@@ -13,6 +13,8 @@ import { NavbarCenterProps } from "./types";
  */
 export function NavbarCenter({
   menus = [],
+  protectedPaths = [],
+  userRole,
   isMobile = false,
   className = "",
   onItemClick,
@@ -61,12 +63,56 @@ export function NavbarCenter({
   };
 
   // =========================================================================
+  // ตรวจสอบว่า path นี้ได้รับอนุญาตให้แสดงหรือไม่ โดยเทียบกับ protectedPaths
+  // - ถ้า path ไม่ตรงกับ protectedPaths ใดเลย → แสดงปกติ (return true)
+  // - ถ้า path ตรงกับ protectedPaths → ต้องมี userRole ตรงกับ roles ที่กำหนด
+  // =========================================================================
+  const isPathAllowed = (href?: string): boolean => {
+    if (!href) return true;
+    const matched = protectedPaths.find(
+      (pp) => href === pp.path || (pp.path !== "/" && href.startsWith(`${pp.path}/`))
+    );
+    if (!matched) return true; // ไม่ได้ถูก protect → แสดงได้
+    if (!userRole) return false; // ถูก protect แต่ไม่มี role → ซ่อน
+    return matched.roles.includes(userRole);
+  };
+
+  // กรอง submenu items (level 2) ตาม protectedPaths
+  const filterSubMenuItems = (items?: SubMenuItem[]): SubMenuItem[] | undefined => {
+    if (!items || items.length === 0) return items;
+    return items
+      .filter((sub) => isPathAllowed(sub.href))
+      .map((sub) => ({
+        ...sub,
+        submenu: filterSubMenuItems(sub.submenu),
+      }))
+      .filter((sub) => {
+        // ถ้ามี submenu ย่อย แต่กรองจนหมด → ซ่อน parent ด้วย
+        if (sub.submenu && sub.submenu.length === 0) return false;
+        return true;
+      });
+  };
+
+  // กรอง top-level menus ตาม protectedPaths
+  const filteredMenus: NavMenuItem[] = menus
+    .filter((item) => isPathAllowed(item.href))
+    .map((item) => ({
+      ...item,
+      submenu: filterSubMenuItems(item.submenu),
+    }))
+    .filter((item) => {
+      // ถ้ามี submenu แต่กรองจนหมด → ซ่อนเมนูหลักด้วย
+      if (item.submenu && item.submenu.length === 0) return false;
+      return true;
+    });
+
+  // =========================================================================
   // MOBILE NAVIGATION VIEW
   // =========================================================================
   if (isMobile) {
     return (
       <div className={`space-y-1 ${className}`}>
-        {menus.map((item, mIdx) => {
+        {filteredMenus.map((item, mIdx) => {
           const hasSub = Boolean(item.submenu && item.submenu.length > 0);
           const topAccordionKey = `mobile-top-${mIdx}`;
           const isTopOpen = Boolean(openAccordions[topAccordionKey]);
@@ -206,7 +252,7 @@ export function NavbarCenter({
       ref={navContainerRef}
       className={`hidden md:flex items-center gap-1.5 flex-1 justify-start ml-6 ${className}`}
     >
-      {menus.map((item, menuIdx) => {
+      {filteredMenus.map((item, menuIdx) => {
         const hasSubmenu = Boolean(item.submenu && item.submenu.length > 0);
         const isOpen = activeMenuIndex === menuIdx;
 

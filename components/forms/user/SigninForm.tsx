@@ -4,7 +4,7 @@ import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldCheck, LogIn, ArrowRight } from "lucide-react";
-import { signinSchema } from "@/utils/validation/signin_form/schema";
+import { SigninSchema } from "@/utils/validation/signin_form/schema";
 import { TextBox } from "@/components/form_controls/TextBox";
 import { PasswordBox } from "@/components/form_controls/PasswordBox";
 import { CheckBox } from "@/components/form_controls/CheckBox";
@@ -35,7 +35,7 @@ function SigninFormContent() {
     setGeneralError("");
     setFieldErrors({});
 
-    const result = signinSchema.safeParse({
+    const result = SigninSchema.safeParse({
       email,
       password,
       rememberMe,
@@ -88,8 +88,8 @@ function SigninFormContent() {
       // นำทางไปยัง callbackUrl หรือหน้าหลัก
       const target =
         callbackUrl &&
-        !callbackUrl.startsWith("/u/signin") &&
-        !callbackUrl.startsWith("/u/signup")
+          !callbackUrl.startsWith("/u/signin") &&
+          !callbackUrl.startsWith("/u/signup")
           ? callbackUrl
           : "/";
 
@@ -181,7 +181,7 @@ function SigninFormContent() {
                 disabled={loading}
               />
               <Link
-                href="/u/forgot_password"
+                href="/u/forgot-password"
                 className="text-xs sm:text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors hover:underline shrink-0"
               >
                 ลืมรหัสผ่าน?

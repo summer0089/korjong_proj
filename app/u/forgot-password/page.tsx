@@ -1,6 +1,12 @@
-import SignupForm from "@/components/forms/user/SignupForm";
+import type { Metadata } from "next";
+import ForgotPasswordForm from "@/components/forms/user/ForgotPasswordForm";
 
-export default function SignUpPage() {
+export const metadata: Metadata = {
+  title: "ลืมรหัสผ่าน | Korjong : ระบบจองห้องประชุมออนไลน์",
+  description: "ขอรับรหัส OTP สำหรับรีเซ็ตรหัสผ่านบัญชีผู้ใช้ระบบจองห้องประชุมออนไลน์ เทศบาลเมืองแสนสุข",
+};
+
+export default function ForgotPasswordPage() {
   return (
     <div className="min-h-[calc(100vh-140px)] flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
       {/* Background Decorative Gradient Blobs */}
@@ -13,7 +19,7 @@ export default function SignUpPage() {
       </div>
 
       <main className="w-full flex items-center justify-center">
-        <SignupForm />
+        <ForgotPasswordForm />
       </main>
     </div>
   );

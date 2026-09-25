@@ -5,7 +5,7 @@ import { TextBox } from "@/components/form_controls/TextBox";
 import { Button } from "@/components/form_controls/Button";
 import { TextAlert } from "@/components/form_controls/TextAlert";
 import { DataTable, DataTableColumn } from "@/components/form_controls/DataTable";
-import { departmentSchema } from "@/utils/validation/department_form/schema";
+import { DepartmentSchema } from "@/utils/validation/department_form/schema";
 import { formatThaiDate } from "@/utils/helper/thai_date";
 import {
   Building2,
@@ -87,7 +87,7 @@ export function DepartmentForm() {
     setSuccessMessage("");
 
     // Validate using Zod
-    const validation = departmentSchema.safeParse({ name });
+    const validation = DepartmentSchema.safeParse({ name });
     if (!validation.success) {
       const issue = validation.error.issues[0];
       setFieldError(issue?.message || "ข้อมูลไม่ถูกต้อง");

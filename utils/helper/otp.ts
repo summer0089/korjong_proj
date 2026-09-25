@@ -2,8 +2,7 @@ import crypto from "crypto";
 
 export const OTP_COOKIE_NAME = "korjong_otp_token";
 
-const OTP_SECRET =
-  process.env.OTP_SECRET || "korjong-stateless-otp-secret-key-32chars!";
+const OTP_SECRET = process.env.OTP_SECRET || "korjong-stateless-otp-secret-key-32chars!";
 
 export type OtpVerificationError = "EXPIRED" | "INVALID" | "MALFORMED";
 
@@ -103,5 +102,51 @@ export function verifyStatelessOtpToken(
     return { isValid: true };
   } catch {
     return { isValid: false, error: "INVALID" };
+  }
+}
+
+/**
+ * สร้าง Password Reset Token สำหรับยืนยันการเปลี่ยนรหัสผ่านหลังตรวจ OTP ผ่านแล้ว (อายุ 15 นาที)
+ */
+export function createPasswordResetToken(email: string, expiresInMinutes = 15): string {
+  const normalizedEmail = email.toLowerCase().trim();
+  const expiresAt = Date.now() + expiresInMinutes * 60 * 1000;
+  const payload = `reset:${normalizedEmail}:${expiresAt}`;
+
+  const signature = crypto
+    .createHmac("sha256", OTP_SECRET)
+    .update(payload)
+    .digest("hex");
+
+  return `${expiresAt}.${signature}`;
+}
+
+/**
+ * ตรวจสอบความถูกต้องและวันหมดอายุของ Password Reset Token
+ */
+export function verifyPasswordResetToken(email: string, token: string): boolean {
+  if (!token || typeof token !== "string") return false;
+
+  const parts = token.split(".");
+  if (parts.length !== 2) return false;
+
+  const [expiresAtStr, signature] = parts;
+  const expiresAt = parseInt(expiresAtStr, 10);
+  if (isNaN(expiresAt) || Date.now() > expiresAt) return false;
+
+  const normalizedEmail = email.toLowerCase().trim();
+  const payload = `reset:${normalizedEmail}:${expiresAt}`;
+  const expectedSignature = crypto
+    .createHmac("sha256", OTP_SECRET)
+    .update(payload)
+    .digest("hex");
+
+  try {
+    const sigBuffer = Buffer.from(signature, "hex");
+    const expectedBuffer = Buffer.from(expectedSignature, "hex");
+    if (sigBuffer.length !== expectedBuffer.length) return false;
+    return crypto.timingSafeEqual(sigBuffer, expectedBuffer);
+  } catch {
+    return false;
   }
 }

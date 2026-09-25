@@ -2,33 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
 import checkProtectedApi from "@/utils/helper/protected_api";
 
-// DELETE /api/user/delete - ลบบัญชีผู้ใช้งาน (เฉพาะ ADMIN)
-// รองรับการรับ id ผ่าน searchParams (?id=...) หรือ JSON body ({ id: "..." })
-export async function DELETE(req: NextRequest) {
+interface RouteParams {
+  params: Promise<{ id: string }>;
+}
+
+// DELETE /api/user/delete/[id] - ลบบัญชีผู้ใช้งาน (เฉพาะ ADMIN)
+export async function DELETE(req: NextRequest, { params }: RouteParams) {
   try {
-    // 1. ตรวจสอบสิทธิ์ผู้ดูแลระบบ (ADMIN)
     const authResult = await checkProtectedApi(["ADMIN"]);
     if (authResult instanceof NextResponse) return authResult;
     const { user: sessionUser } = authResult;
 
-    let id = req.nextUrl.searchParams.get("id");
+    const { id } = await params;
     if (!id) {
-      try {
-        const body = await req.json();
-        id = body?.id || body?.userId;
-      } catch {
-        // body could be empty
-      }
-    }
-
-    if (!id || typeof id !== "string") {
       return NextResponse.json(
         { success: false, message: "กรุณาระบุรหัสผู้ใช้งานที่ต้องการลบ (ID)" },
         { status: 400 }
       );
     }
 
-    // 2. ป้องกันไม่ให้แอดมินลบบัญชีตนเอง
     if (sessionUser.id === id) {
       return NextResponse.json(
         {
@@ -39,7 +31,6 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    // 3. ตรวจสอบว่าผู้ใช้งานมีอยู่จริงหรือไม่
     const existing = await db.orm.public.Employee.where({ id }).first();
     if (!existing) {
       return NextResponse.json(
@@ -48,7 +39,6 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    // 4. ตรวจสอบว่าผู้ใช้มีประวัติการจองห้องประชุมหรือไม่
     const booking = await db.orm.public.MeetingBooking
       .where({ employeeId: id })
       .first();
@@ -64,7 +54,6 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    // 5. ลบข้อมูลผู้ใช้งาน
     await db.orm.public.Employee.where({ id }).delete();
 
     return NextResponse.json({
@@ -72,7 +61,7 @@ export async function DELETE(req: NextRequest) {
       message: `ลบบัญชีผู้ใช้งาน "${existing.firstname} ${existing.lastname}" สำเร็จ`,
     });
   } catch (error: unknown) {
-    console.error("DELETE /api/user/delete error:", error);
+    console.error("DELETE /api/user/delete/[id] error:", error);
     const message =
       error instanceof Error ? error.message : "เกิดข้อผิดพลาดในการลบบัญชีผู้ใช้งาน";
     return NextResponse.json(

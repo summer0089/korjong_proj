@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { db } from "@/prisma/db";
-import { signinSchema } from "@/utils/validation/signin_form/schema";
+import { SigninSchema } from "@/utils/validation/signin_form/schema";
 import {
   createSessionToken,
   getSessionCookieOptions,
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const validation = signinSchema.safeParse(body);
+    const validation = SigninSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
         {

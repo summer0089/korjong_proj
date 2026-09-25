@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const signinSchema = z.object({
+export const SigninSchema = z.object({
     email: z
         .string()
         .trim()
@@ -12,4 +12,4 @@ export const signinSchema = z.object({
     rememberMe: z.boolean().optional(),
 });
 
-export type SigninFormData = z.infer<typeof signinSchema>;
+export type SigninFormData = z.infer<typeof SigninSchema>;

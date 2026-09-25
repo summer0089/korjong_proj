@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@prisma/orm-postgres": "^8.0.0-rc.11",
+    "@types/nodemailer": "^8.0.2",
     "bcryptjs": "^3.0.3",
     "dotenv": "^18.0.3",
     "lucide-react": "^1.48.0",

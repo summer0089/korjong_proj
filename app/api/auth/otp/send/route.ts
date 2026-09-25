@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
 import { emailStepSchema } from "@/utils/validation/signup_form/schema";
-import { sendOtpEmail } from "@/utils/helper/smtp_email";
+import { sendOtpEmail, sendPasswordResetOtpEmail } from "@/utils/helper/smtp_email";
 import {
   generateOtpCode,
   createStatelessOtpToken,
@@ -25,20 +25,45 @@ export async function POST(req: NextRequest) {
     }
 
     const email = validation.data.email.toLowerCase().trim();
+    const type = body.type as string | undefined;
 
-    // ตรวจสอบว่ามีพนักงานที่มีอีเมลนี้แล้วหรือไม่
+    // ค้นหาข้อมูลพนักงานในระบบ
     const existingEmployee = await db.orm.public.Employee
       .where((employee) => employee.email.eq(email))
       .first();
 
-    if (existingEmployee) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "อีเมลนี้ได้ลงทะเบียนไว้ในระบบแล้ว กรุณาเข้าสู่ระบบ",
-        },
-        { status: 409 }
-      );
+    if (type === "forgot_password") {
+      // สำหรับกรณีลืมรหัสผ่าน: อีเมลต้องมีอยู่ในระบบและบัญชีต้องเปิดใช้งานอยู่
+      if (!existingEmployee) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "ไม่พบข้อมูลผู้ใช้งานที่ลงทะเบียนด้วยอีเมลนี้",
+          },
+          { status: 404 }
+        );
+      }
+
+      if (!existingEmployee.isActive) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "บัญชีผู้ใช้นี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ",
+          },
+          { status: 403 }
+        );
+      }
+    } else {
+      // สำหรับกรณีสมัครสมาชิก: อีเมลต้องยังไม่เคยลงทะเบียน
+      if (existingEmployee) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "อีเมลนี้ได้ลงทะเบียนไว้ในระบบแล้ว กรุณาเข้าสู่ระบบ",
+          },
+          { status: 409 }
+        );
+      }
     }
 
     // สร้างรหัส OTP 6 หลัก และสร้าง Stateless Token ด้วย Crypto HMAC (หมดอายุใน 5 นาที)
@@ -47,7 +72,11 @@ export async function POST(req: NextRequest) {
 
     // Send email via SMTP
     try {
-      await sendOtpEmail(email, otp);
+      if (type === "forgot_password") {
+        await sendPasswordResetOtpEmail(email, otp);
+      } else {
+        await sendOtpEmail(email, otp);
+      }
     } catch (mailError) {
       console.error("Failed to send OTP email via SMTP:", mailError);
       return NextResponse.json(

@@ -1,4 +1,4 @@
-import DepartmentForm from "@/components/forms/master/Department";
+import DepartmentForm from "@/components/forms/master/DepartmentForm";
 
 export default function DepartmentPage() {
     return (

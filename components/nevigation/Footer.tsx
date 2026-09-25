@@ -13,10 +13,10 @@ interface FooterProps {
 }
 
 export function Footer({
-  organizationName = "เทศบาลเมืองแสนสุข",
+  organizationName,
   copyrightYear,
   text,
-  hiddenPaths = ["/u/signin", "/u/signup", "/u/forgot-password", "/u/forgot_password"],
+  hiddenPaths = [],
   hidden = false,
   className = "",
 }: FooterProps) {

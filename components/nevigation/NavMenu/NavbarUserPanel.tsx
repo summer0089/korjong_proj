@@ -6,7 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ChevronDown, User, CalendarDays, LogOut, LogIn } from "lucide-react";
 import { Button } from "@/components/form_controls/Button";
-import { NavbarUserPanelProps, UserMenuItem } from "./types";
+import { NavbarUserPanelProps, UserMenuItem, ProtectedPath } from "./types";
 import { getAvatarProps } from "@/utils/helper/avatar";
 
 /** แปลงชื่อ Role ให้อ่านง่าย */
@@ -41,6 +41,8 @@ export function NavbarUserPanel({
   user,
   menus,
   userMenus,
+  protectedPaths = [],
+  userRole,
   isLoggedIn = true,
   onLogout,
   isMobile = false,
@@ -49,6 +51,20 @@ export function NavbarUserPanel({
 }: NavbarUserPanelProps) {
   const effectiveMenus = menus ?? userMenus ?? DEFAULT_USER_MENUS;
   const pathname = usePathname();
+
+  // ตรวจสอบว่า path นี้ได้รับอนุญาตให้แสดงหรือไม่ โดยเทียบกับ protectedPaths
+  const isPathAllowed = (href?: string): boolean => {
+    if (!href) return true;
+    const matched = protectedPaths.find(
+      (pp) => href === pp.path || (pp.path !== "/" && href.startsWith(`${pp.path}/`))
+    );
+    if (!matched) return true;
+    if (!userRole) return false;
+    return matched.roles.includes(userRole);
+  };
+
+  // กรอง user menus ตาม protectedPaths
+  const filteredMenus = effectiveMenus.filter((item) => isPathAllowed(item.href));
 
   // สถานะเปิด/ปิด Dropdown Menu ของ User
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -328,7 +344,7 @@ export function NavbarUserPanel({
 
           {/* รายการเมนูผู้ใช้งาน */}
           <div className="px-2 py-1.5 space-y-0.5">
-            {effectiveMenus.map((item, idx) => {
+            {filteredMenus.map((item, idx) => {
               if (item.roles && item.roles.length > 0 && user?.role) {
                 if (!item.roles.includes(user.role)) return null;
               }

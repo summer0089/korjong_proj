@@ -15,6 +15,7 @@ import {
   NavbarLogoProps,
   NavbarCenterProps,
   NavbarUserPanelProps,
+  ProtectedPath,
 } from "./types";
 
 // Re-export types สำหรับผู้ใช้งานภายนอก
@@ -27,6 +28,7 @@ export type {
   NavbarLogoProps,
   NavbarCenterProps,
   NavbarUserPanelProps,
+  ProtectedPath,
 };
 
 // Re-export sub-components
@@ -72,6 +74,7 @@ export function NavBar({
   badge = "ระบบจองห้องประชุม",
   menus = DEFAULT_MENUS,
   userMenus,
+  protectedPaths = [],
   user,
   isLoggedIn,
   onLogout,
@@ -176,7 +179,7 @@ export function NavBar({
 
   return (
     <header
-      className={`bg-surface/95 backdrop-blur-md border-b border-border sticky top-0 z-sticky shadow-xs select-none ${className}`}
+      className={`bg-surface/95 backdrop-blur-md border-b border-border sticky top-0 z-40 z-sticky shadow-xs select-none ${className}`}
     >
       <div className="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* ========================================================================= */}
@@ -193,7 +196,7 @@ export function NavBar({
         {/* ========================================================================= */}
         {/* 2. ส่วนกลาง: NavbarCenter (ชุดเมนูหลัก Desktop) */}
         {/* ========================================================================= */}
-        <NavbarCenter menus={menus} />
+        <NavbarCenter menus={menus} protectedPaths={protectedPaths} userRole={currentUser?.role} />
 
         {/* ========================================================================= */}
         {/* 3. ส่วนขวา: NavbarUserPanel (User Authenticated / Sign In Button) */}
@@ -202,6 +205,8 @@ export function NavBar({
           <NavbarUserPanel
             user={currentUser}
             menus={userMenus}
+            protectedPaths={protectedPaths}
+            userRole={currentUser?.role}
             isLoggedIn={Boolean(currentUser)}
             onLogout={handleLogout}
           />
@@ -231,6 +236,8 @@ export function NavBar({
           <NavbarUserPanel
             user={currentUser}
             menus={userMenus}
+            protectedPaths={protectedPaths}
+            userRole={currentUser?.role}
             isLoggedIn={Boolean(currentUser)}
             onLogout={handleLogout}
             isMobile
@@ -240,6 +247,8 @@ export function NavBar({
           {/* ชุดเมนูหลักบน Mobile */}
           <NavbarCenter
             menus={menus}
+            protectedPaths={protectedPaths}
+            userRole={currentUser?.role}
             isMobile
             onItemClick={() => setIsMobileOpen(false)}
           />

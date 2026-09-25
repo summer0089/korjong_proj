@@ -12,7 +12,7 @@ import { MessageBox } from "@/components/form_controls/MessageBox";
 import {
   emailStepSchema,
   otpStepSchema,
-  infoStepSchema,
+  EmployeeSignupSchema,
   InfoStepData,
 } from "@/utils/validation/signup_form/schema";
 import {
@@ -245,7 +245,7 @@ export function Signup() {
     setGeneralError("");
     setFieldErrors({});
 
-    const result = infoStepSchema.safeParse(formData);
+    const result = EmployeeSignupSchema.safeParse(formData);
     if (!result.success) {
       const errors: FieldErrors = {};
       for (const issue of result.error.issues) {

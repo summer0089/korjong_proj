@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
-import { departmentSchema } from "@/utils/validation/department_form/schema";
+import { DepartmentSchema } from "@/utils/validation/department_form/schema";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -27,7 +27,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     }
 
     const body = await req.json();
-    const validation = departmentSchema.safeParse(body);
+    const validation = DepartmentSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
         {
@@ -44,8 +44,8 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 
     // ตรวจสอบชื่อหน่วยงานซ้ำ
     const duplicate = await db.orm.public.Department
-      .where((d: { name: { eq: (v: string) => unknown } }) => d.name.eq(trimmedName))
-      .where((d: { id: { neq: (v: string) => unknown } }) => d.id.neq(id))
+      .where((d) => d.name.eq(trimmedName))
+      .where((d) => d.id.neq(id))
       .first();
 
     if (duplicate) {

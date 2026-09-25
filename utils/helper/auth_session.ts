@@ -2,11 +2,11 @@ import crypto from "crypto";
 
 export const SESSION_COOKIE_NAME = "korjong_session";
 
-const AUTH_SECRET =
-  process.env.AUTH_SECRET ||
-  process.env.BETTER_AUTH_SECRET ||
-  process.env.OTP_SECRET ||
-  "korjong_session_super_secret_auth_key_2026_default_key";
+const AUTH_SECRET = process.env.AUTH_SECRET || "korjong-stateless-otp-secret-key-32chars!";
+
+if (!AUTH_SECRET) {
+  throw new Error("Missing AUTH_SECRET environment variable");
+}
 
 /**
  * โครงสร้างข้อมูล Employee ทั้งหมดที่บันทึกลงใน Session Cookie (ไม่รวมรหัสผ่าน)

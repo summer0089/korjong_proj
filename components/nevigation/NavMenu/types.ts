@@ -1,5 +1,11 @@
 import React from "react";
 
+/** กำหนด path ที่ต้องตรวจสอบสิทธิ์ก่อนแสดงเมนู */
+export interface ProtectedPath {
+  path: string;
+  roles: string[];
+}
+
 /** ข้อมูลโปรไฟล์ผู้ใช้งาน */
 export interface UserProfile {
   id?: string;
@@ -61,6 +67,8 @@ export type NavBarLogoProps = NavbarLogoProps;
 /** Props สำหรับ NavbarCenter */
 export interface NavbarCenterProps {
   menus?: NavMenuItem[];
+  protectedPaths?: ProtectedPath[];
+  userRole?: string;
   isMobile?: boolean;
   className?: string;
   onItemClick?: () => void;
@@ -71,6 +79,8 @@ export interface NavbarUserPanelProps {
   user?: UserProfile | null;
   menus?: UserMenuItem[];
   userMenus?: UserMenuItem[];
+  protectedPaths?: ProtectedPath[];
+  userRole?: string;
   isLoggedIn?: boolean;
   onLogout?: () => void;
   isMobile?: boolean;
@@ -87,6 +97,7 @@ export interface NavBarProps {
   badge?: string;
   menus?: NavMenuItem[];
   userMenus?: UserMenuItem[];
+  protectedPaths?: ProtectedPath[];
   user?: UserProfile | null;
   isLoggedIn?: boolean;
   onLogout?: () => void;

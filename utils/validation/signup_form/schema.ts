@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Base schema for user signup data
-export const employeeSchema = z.object({
+export const EmployeeSchema = z.object({
   firstName: z
     .string()
     .trim()
@@ -41,7 +41,7 @@ export const employeeSchema = z.object({
 });
 
 // Client form schema with confirm password
-export const confirmPasswordSchema = employeeSchema
+export const ConfirmPasswordSchema = EmployeeSchema
   .extend({
     confirmPassword: z.string().min(1, "กรุณายืนยันรหัสผ่าน"),
   })
@@ -69,7 +69,7 @@ export const otpStepSchema = z.object({
 });
 
 // Step 2: Information form schema
-export const infoStepSchema = z
+export const EmployeeSignupSchema = z
   .object({
     firstName: z
       .string()
@@ -108,7 +108,7 @@ export const infoStepSchema = z
   });
 
 // API schema for /api/user/register
-export const registerUserSchema = z.object({
+export const RegisterUserSchema = z.object({
   email: z
     .string()
     .trim()
@@ -145,8 +145,8 @@ export const registerUserSchema = z.object({
     .max(100, "รหัสผ่านต้องไม่เกิน 100 ตัวอักษร"),
 });
 
-export type SignupFormData = z.infer<typeof confirmPasswordSchema>;
+export type SignupFormData = z.infer<typeof ConfirmPasswordSchema>;
 export type EmailStepData = z.infer<typeof emailStepSchema>;
 export type OtpStepData = z.infer<typeof otpStepSchema>;
-export type InfoStepData = z.infer<typeof infoStepSchema>;
-export type RegisterUserData = z.infer<typeof registerUserSchema>;
+export type InfoStepData = z.infer<typeof EmployeeSignupSchema>;
+export type RegisterUserData = z.infer<typeof RegisterUserSchema>;

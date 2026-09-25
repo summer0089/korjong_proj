@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/form_controls/Button";
 import { TextAlert } from "@/components/form_controls/TextAlert";
@@ -171,6 +171,13 @@ export function ImageInput({
   const [errorMessage, setErrorMessage] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Clear local preview when controlled value is reset to null/undefined
+  useEffect(() => {
+    if (!value) {
+      setLocalPreview(null);
+    }
+  }, [value]);
 
   // The active image to display: local preview > controlled value > initial currentImage
   const rawDisplayImage = localPreview || value || currentImage;

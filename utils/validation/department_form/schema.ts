@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const departmentSchema = z.object({
+export const DepartmentSchema = z.object({
   name: z
     .string()
     .trim()
@@ -8,4 +8,4 @@ export const departmentSchema = z.object({
     .max(150, "ชื่อหน่วยงานต้องไม่เกิน 150 ตัวอักษร"),
 });
 
-export type DepartmentFormData = z.infer<typeof departmentSchema>;
+export type DepartmentFormData = z.infer<typeof DepartmentSchema>;

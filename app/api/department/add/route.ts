@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
-import { departmentSchema } from "@/utils/validation/department_form/schema";
+import { DepartmentSchema } from "@/utils/validation/department_form/schema";
 
 // POST /api/department/add - API สำหรับเพิ่มข้อมูลหน่วยงาน
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const validation = departmentSchema.safeParse(body);
+    const validation = DepartmentSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
         {
