@@ -52,19 +52,23 @@ export function NavbarUserPanel({
   const effectiveMenus = menus ?? userMenus ?? DEFAULT_USER_MENUS;
   const pathname = usePathname();
 
-  // ตรวจสอบว่า path นี้ได้รับอนุญาตให้แสดงหรือไม่ โดยเทียบกับ protectedPaths
-  const isPathAllowed = (href?: string): boolean => {
-    if (!href) return true;
+  // ตรวจสอบว่าเมนูนี้ได้รับอนุญาตให้แสดงหรือไม่ โดยเทียบกับ item.roles และ protectedPaths
+  const isUserMenuAllowed = (item: UserMenuItem): boolean => {
+    if (item.roles && item.roles.length > 0) {
+      if (!userRole) return false;
+      if (!item.roles.includes(userRole)) return false;
+    }
+    if (!item.href) return true;
     const matched = protectedPaths.find(
-      (pp) => href === pp.path || (pp.path !== "/" && href.startsWith(`${pp.path}/`))
+      (pp) => item.href === pp.path || (pp.path !== "/" && item.href?.startsWith(`${pp.path}/`))
     );
     if (!matched) return true;
     if (!userRole) return false;
     return matched.roles.includes(userRole);
   };
 
-  // กรอง user menus ตาม protectedPaths
-  const filteredMenus = effectiveMenus.filter((item) => isPathAllowed(item.href));
+  // กรอง user menus ตามสิทธิ์
+  const filteredMenus = effectiveMenus.filter(isUserMenuAllowed);
 
   // สถานะเปิด/ปิด Dropdown Menu ของ User
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -141,9 +145,9 @@ export function NavbarUserPanel({
               user.profile_image
                 ? undefined
                 : {
-                    backgroundColor: avatarProps?.backgroundColor,
-                    color: avatarProps?.color,
-                  }
+                  backgroundColor: avatarProps?.backgroundColor,
+                  color: avatarProps?.color,
+                }
             }
           >
             {user.profile_image ? (
@@ -263,9 +267,9 @@ export function NavbarUserPanel({
             user.profile_image
               ? undefined
               : {
-                  backgroundColor: avatarProps?.backgroundColor,
-                  color: avatarProps?.color,
-                }
+                backgroundColor: avatarProps?.backgroundColor,
+                color: avatarProps?.color,
+              }
           }
         >
           {user.profile_image ? (
@@ -291,9 +295,8 @@ export function NavbarUserPanel({
         </div>
 
         <ChevronDown
-          className={`hidden lg:block w-3.5 h-3.5 text-text-muted transition-transform duration-200 ${
-            isUserMenuOpen ? "rotate-180 text-primary-600" : ""
-          }`}
+          className={`hidden lg:block w-3.5 h-3.5 text-text-muted transition-transform duration-200 ${isUserMenuOpen ? "rotate-180 text-primary-600" : ""
+            }`}
         />
       </button>
 
@@ -308,9 +311,9 @@ export function NavbarUserPanel({
                 user.profile_image
                   ? undefined
                   : {
-                      backgroundColor: avatarProps?.backgroundColor,
-                      color: avatarProps?.color,
-                    }
+                    backgroundColor: avatarProps?.backgroundColor,
+                    color: avatarProps?.color,
+                  }
               }
             >
               {user.profile_image ? (

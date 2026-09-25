@@ -41,21 +41,21 @@ const DEFAULT_MENUS: NavMenuItem[] = [];
  * แปลงข้อมูลพนักงานจาก Session เป็น UserProfile สำหรับ Navbar
  */
 function mapSessionToUserProfile(emp: any): UserProfile {
-  const firstName = emp.firstname || "";
-  const lastName = emp.lastname || "";
-  const name = `${firstName} ${lastName}`.trim() || emp.email;
+  const firstName = emp.firstName || emp.firstname || "";
+  const lastName = emp.lastName || emp.lastname || "";
+  const name = emp.name || `${firstName} ${lastName}`.trim() || emp.email || "";
 
   return {
     id: emp.id,
     name,
-    firstName: emp.firstname,
-    lastName: emp.lastname,
+    firstName,
+    lastName,
     email: emp.email,
     role: emp.role,
     position: emp.position,
     department: emp.department,
     phoneNumber: emp.phoneNumber,
-    profile_image: emp.profileImage || null,
+    profile_image: emp.profile_image || emp.profileImage || null,
   };
 }
 
@@ -98,6 +98,7 @@ export function NavBar({
     try {
       const res = await fetch("/api/auth/session", {
         cache: "no-store",
+        credentials: "include",
       });
       if (res.ok) {
         const data = await res.json();
@@ -113,27 +114,40 @@ export function NavBar({
     }
   }, []);
 
-  // ตรวจสอบ Session จาก Cookie และ Props
+  // ซิงค์ currentUser เมื่อ props เปลี่ยนแปลง
   useEffect(() => {
-    // หากมีการส่ง user มาทาง props แบบระบุชัดเจน ให้ใช้ค่านั้น
     if (user !== undefined && isLoggedIn !== undefined) {
       setCurrentUser(isLoggedIn ? user : null);
-      return;
+    }
+  }, [user, isLoggedIn]);
+
+  // ติดตาม event สำหรับการเปลี่ยนแปลง auth (login, logout, update profile, focus)
+  useEffect(() => {
+    if (user === undefined || isLoggedIn === undefined) {
+      refreshSession();
     }
 
-    // ตรวจสอบ Session จาก Cookie
-    refreshSession();
-
-    // ฟัง event เมื่อมีการ login หรือ logout จากหน้าอื่น
     const handleAuthChange = () => {
       refreshSession();
     };
 
+    const handleFocus = () => {
+      refreshSession();
+    };
+
     window.addEventListener("korjong-auth-change", handleAuthChange);
+    window.addEventListener("focus", handleFocus);
+
     return () => {
       window.removeEventListener("korjong-auth-change", handleAuthChange);
+      window.removeEventListener("focus", handleFocus);
     };
-  }, [pathname, user, isLoggedIn, refreshSession]);
+  }, [refreshSession, user, isLoggedIn]);
+
+  // รีเฟรชสถานะ session เมื่อเปลี่ยนเส้นทาง (URL Pathname)
+  useEffect(() => {
+    refreshSession();
+  }, [pathname, refreshSession]);
 
   // ปิด mobile drawer เมื่อเปลี่ยนหน้า
   useEffect(() => {

@@ -63,9 +63,9 @@ export function NavbarCenter({
   };
 
   // =========================================================================
-  // ตรวจสอบว่า path นี้ได้รับอนุญาตให้แสดงหรือไม่ โดยเทียบกับ protectedPaths
-  // - ถ้า path ไม่ตรงกับ protectedPaths ใดเลย → แสดงปกติ (return true)
-  // - ถ้า path ตรงกับ protectedPaths → ต้องมี userRole ตรงกับ roles ที่กำหนด
+  // ตรวจสอบว่า path หรือ menu item นี้ได้รับอนุญาตให้แสดงหรือไม่
+  // 1. ตรวจสอบจาก roles บนตัว item ก่อน (ถ้ามี)
+  // 2. ตรวจสอบตาม protectedPaths
   // =========================================================================
   const isPathAllowed = (href?: string): boolean => {
     if (!href) return true;
@@ -77,11 +77,21 @@ export function NavbarCenter({
     return matched.roles.includes(userRole);
   };
 
-  // กรอง submenu items (level 2) ตาม protectedPaths
+  const isMenuItemAllowed = (item: { href?: string; roles?: string[] }): boolean => {
+    // 1. ตรวจสอบ roles บน item โดยตรง (ถ้ามีกำหนด)
+    if (item.roles && item.roles.length > 0) {
+      if (!userRole) return false;
+      if (!item.roles.includes(userRole)) return false;
+    }
+    // 2. ตรวจสอบตาม protectedPaths (ถ้ามี href)
+    return isPathAllowed(item.href);
+  };
+
+  // กรอง submenu items (level 2) ตามสิทธิ์
   const filterSubMenuItems = (items?: SubMenuItem[]): SubMenuItem[] | undefined => {
     if (!items || items.length === 0) return items;
     return items
-      .filter((sub) => isPathAllowed(sub.href))
+      .filter((sub) => isMenuItemAllowed(sub))
       .map((sub) => ({
         ...sub,
         submenu: filterSubMenuItems(sub.submenu),
@@ -93,9 +103,9 @@ export function NavbarCenter({
       });
   };
 
-  // กรอง top-level menus ตาม protectedPaths
+  // กรอง top-level menus ตามสิทธิ์
   const filteredMenus: NavMenuItem[] = menus
-    .filter((item) => isPathAllowed(item.href))
+    .filter((item) => isMenuItemAllowed(item))
     .map((item) => ({
       ...item,
       submenu: filterSubMenuItems(item.submenu),
