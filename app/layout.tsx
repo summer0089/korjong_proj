@@ -78,12 +78,12 @@ const DEFAULT_MENUS: NavMenuItem[] = [
         submenu: [
           {
             title: "สถิติการใช้งานห้องประชุม",
-            href: "/p/reports/usage",
+            href: "/p/report/usage",
             icon: <BarChart3 className="w-3.5 h-3.5 text-amber-500" />,
           },
           {
             title: "ประวัติการอนุมัติการจอง",
-            href: "/p/reports/approval",
+            href: "/p/report/approval",
             icon: <CalendarDays className="w-3.5 h-3.5 text-amber-500" />,
           },
         ],
