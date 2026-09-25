@@ -2,27 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   SESSION_COOKIE_NAME,
   verifySessionToken,
-} from "@/utils/helper/auth_session";
+} from "@/lib/auth/session";
 
 // เส้นทางที่ต้องการป้องกัน ต้องเข้าสู่ระบบก่อน (Protected Routes)
 const PROTECTED_PREFIXES = [
-  "/i",
-  "/bookings",
+  "/p/my-booking",
   "/u/profile",
-  "/u/bookings",
-  "/u/management",
-  "/reports",
+  "/u/change-password",
 ];
 
 //เส้นทางสำหรับ admin เท่านั้น
 const ADMIN_PREFIXES = [
-  "/u/management",
+  "/a/employee-list",
   "/i/department",
+  "/i/meeting-room"
 ];
 
 //เส้นทางสำหรับ approver และ admin เท่านั้น
 const APPROVER_PREFIXES = [
-  "/a/request/approval",
+  "/a/approve-list",
 ];
 
 // หน้าสำหรับการยืนยันตัวตน (ถ้าเข้าสู่ระบบแล้วไม่ควรเข้าซ้ำ)

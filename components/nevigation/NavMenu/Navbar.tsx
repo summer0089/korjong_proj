@@ -96,7 +96,7 @@ export function NavBar({
   // ฟังก์ชันดึงสถานะ Session จาก Cookie ผ่าน API
   const refreshSession = useCallback(async () => {
     try {
-      const res = await fetch("/api/auth/session/get", {
+      const res = await fetch("/api/auth/session", {
         cache: "no-store",
       });
       if (res.ok) {

@@ -74,7 +74,7 @@ export default function EditProfileForm() {
         setLoading(true);
 
         // โหลดข้อมูลส่วนตัวของผู้ใช้งานปัจจุบัน
-        const sessionRes = await fetch("/api/auth/session/get");
+        const sessionRes = await fetch("/api/auth/session");
         const sessionJson = await sessionRes.json();
 
         if (!sessionJson.isLoggedIn || !sessionJson.user) {

@@ -7,7 +7,7 @@ import {
   getSessionCookieOptions,
   sanitizeEmployeePayload,
   SESSION_COOKIE_NAME,
-} from "@/utils/helper/auth_session";
+} from "@/lib/auth/session";
 
 // POST /api/auth/signin - เข้าสู่ระบบและบันทึก Session Cookie
 export async function POST(req: NextRequest) {

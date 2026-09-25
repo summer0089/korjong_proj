@@ -4,9 +4,9 @@ import { emailStepSchema } from "@/utils/validation/signup_form/schema";
 import { sendOtpEmail, sendPasswordResetOtpEmail } from "@/utils/helper/smtp_email";
 import {
   generateOtpCode,
-  createStatelessOtpToken,
+  createOtpToken,
   OTP_COOKIE_NAME,
-} from "@/utils/helper/otp";
+} from "@/lib/auth/otp";
 
 // POST /api/auth/otp/send - ส่งรหัส OTP ไปยังอีเมล (Stateless OTP via Crypto)
 export async function POST(req: NextRequest) {
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
 
     // สร้างรหัส OTP 6 หลัก และสร้าง Stateless Token ด้วย Crypto HMAC (หมดอายุใน 5 นาที)
     const otp = generateOtpCode(6);
-    const token = createStatelessOtpToken(email, otp, 5);
+    const token = createOtpToken(email, otp, 5);
 
     // Send email via SMTP
     try {
