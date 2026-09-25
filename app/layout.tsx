@@ -32,7 +32,7 @@ const DEFAULT_MENUS: NavMenuItem[] = [
     submenu: [
       {
         title: "จองห้องประชุมใหม่",
-        href: "/p/booking/new",
+        href: "/p/booking",
         icon: <PlusCircle className="w-4 h-4 text-[#1a73e8]" />,
         description: "เลือกห้องประชุม วันและช่วงเวลาที่ต้องการ",
       },
@@ -102,23 +102,23 @@ const DEFAULT_USER_MENUS: UserMenuItem[] = [
   {
     title: "แก้ไขข้อมูลส่วนตัว",
     href: "/u/profile",
-    icon: <User className="w-4 h-4 text-text-muted" />,
+    icon: <User className="w-4 h-4 text-slate-600" />,
   },
   {
     title: "เปลี่ยนรหัสผ่าน",
     href: "/u/change-password",
-    icon: <Key className="w-4 h-4 text-text-muted" />,
+    icon: <Key className="w-4 h-4 text-amber-600" />,
   },
   {
-    title: "ดูรายการที่เคยจองห้องประชุม",
+    title: "รายการจองของฉัน",
     href: "/p/my-booking",
-    icon: <CalendarDays className="w-4 h-4 text-text-muted" />,
+    icon: <CalendarDays className="w-4 h-4 text-purple-600" />,
   },
 ]
 
 const PROTECTED_PATHS: ProtectedPath[] = [
   {
-    path: "/p/booking/new",
+    path: "/p/booking",
     roles: ["USER", "ADMIN", "APPROVER"],
   },
   {
