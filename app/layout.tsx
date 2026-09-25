@@ -126,7 +126,7 @@ const PROTECTED_PATHS: ProtectedPath[] = [
     roles: ["ADMIN", "APPROVER"],
   },
   {
-    path: "/u/my-booking",
+    path: "/p/my-booking",
     roles: ["USER", "ADMIN", "APPROVER"],
   },
   {
@@ -142,14 +142,22 @@ const PROTECTED_PATHS: ProtectedPath[] = [
     roles: ["ADMIN"],
   },
   {
-    path: "/i/meetingroom",
+    path: "/i/meeting-room",
     roles: ["ADMIN"],
   },
   {
     path: "/a/employee-list",
     roles: ["ADMIN"],
   },
-]
+  {
+    path: "/a/approve-list",
+    roles: ["ADMIN", "APPROVER"],
+  },
+  {
+    path: "/reports",
+    roles: ["ADMIN", "APPROVER"],
+  },
+];
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
