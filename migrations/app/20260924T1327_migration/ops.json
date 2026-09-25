@@ -1,0 +1,601 @@
+[
+  {
+    "id": "dropTable.post",
+    "label": "Drop table \"post\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"post\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"post\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop table \"post\"",
+        "sql": "DROP TABLE \"public\".\"post\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"post\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"post\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropTable.user",
+    "label": "Drop table \"user\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"user\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop table \"user\"",
+        "sql": "DROP TABLE \"public\".\"user\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"user\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.department",
+    "label": "Create table \"department\"",
+    "summary": "Creates table \"department\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "department"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"department\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"department\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"department\"",
+        "sql": "CREATE TABLE \"public\".\"department\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"department\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"department\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.employee",
+    "label": "Create table \"employee\"",
+    "summary": "Creates table \"employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"employee\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"employee\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"employee\"",
+        "sql": "CREATE TABLE \"public\".\"employee\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"department\" text NOT NULL,\n  \"departmentId\" text NOT NULL,\n  \"email\" text NOT NULL,\n  \"firstname\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"lastname\" text NOT NULL,\n  \"password\" text NOT NULL,\n  \"phoneNumber\" text NOT NULL,\n  \"position\" text NOT NULL,\n  \"profileImage\" text,\n  \"role\" text DEFAULT 'USER' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"employee_role_check_32be53da\" CHECK (\"role\" IN ('ADMIN', 'APPROVER', 'USER'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"employee\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"employee\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.meetingBooking",
+    "label": "Create table \"meetingBooking\"",
+    "summary": "Creates table \"meetingBooking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "meetingBooking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"meetingBooking\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"meetingBooking\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"meetingBooking\"",
+        "sql": "CREATE TABLE \"public\".\"meetingBooking\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"employeeId\" text NOT NULL,\n  \"endTime\" timestamptz NOT NULL,\n  \"id\" text NOT NULL,\n  \"note\" text DEFAULT '' NOT NULL,\n  \"participant\" int4 NOT NULL,\n  \"roomId\" text NOT NULL,\n  \"startTime\" timestamptz NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"topic\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"meetingBooking_status_check_0b6f21cd\" CHECK (\"status\" IN ('PENDING', 'APPROVED', 'CANCELED', 'REJECTED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"meetingBooking\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"meetingBooking\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.meetingRoom",
+    "label": "Create table \"meetingRoom\"",
+    "summary": "Creates table \"meetingRoom\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "meetingRoom"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"meetingRoom\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"meetingRoom\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"meetingRoom\"",
+        "sql": "CREATE TABLE \"public\".\"meetingRoom\" (\n  \"capacity\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"meetingRoom\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"meetingRoom\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.department.department_name_key",
+    "label": "Add unique constraint on \"department\" (name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "department_name_key",
+        "table": "department"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"department_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "department_name_key",
+          "public",
+          "\"public\".\"department\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"department_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"department\" ADD CONSTRAINT \"department_name_key\" UNIQUE (\"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"department_name_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "department_name_key",
+          "public",
+          "\"public\".\"department\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.employee.employee_email_key",
+    "label": "Add unique constraint on \"employee\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "employee_email_key",
+        "table": "employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"employee_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "employee_email_key",
+          "public",
+          "\"public\".\"employee\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"employee_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"employee\" ADD CONSTRAINT \"employee_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"employee_email_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "employee_email_key",
+          "public",
+          "\"public\".\"employee\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.meetingRoom.meetingRoom_name_key",
+    "label": "Add unique constraint on \"meetingRoom\" (name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "meetingRoom_name_key",
+        "table": "meetingRoom"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"meetingRoom_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "meetingRoom_name_key",
+          "public",
+          "\"public\".\"meetingRoom\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"meetingRoom_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"meetingRoom\" ADD CONSTRAINT \"meetingRoom_name_key\" UNIQUE (\"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"meetingRoom_name_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "meetingRoom_name_key",
+          "public",
+          "\"public\".\"meetingRoom\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.employee.employee_departmentId_idx_8e261ed8",
+    "label": "Create index \"employee_departmentId_idx_8e261ed8\" on \"employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "employee_departmentId_idx_8e261ed8",
+        "table": "employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"employee_departmentId_idx_8e261ed8\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"employee_departmentId_idx_8e261ed8\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"employee_departmentId_idx_8e261ed8\"",
+        "sql": "CREATE INDEX \"employee_departmentId_idx_8e261ed8\" ON \"public\".\"employee\" (\"departmentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"employee_departmentId_idx_8e261ed8\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"employee_departmentId_idx_8e261ed8\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.meetingBooking.meetingBooking_employeeId_idx_087dd4a6",
+    "label": "Create index \"meetingBooking_employeeId_idx_087dd4a6\" on \"meetingBooking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "meetingBooking_employeeId_idx_087dd4a6",
+        "table": "meetingBooking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"meetingBooking_employeeId_idx_087dd4a6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"meetingBooking_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"meetingBooking_employeeId_idx_087dd4a6\"",
+        "sql": "CREATE INDEX \"meetingBooking_employeeId_idx_087dd4a6\" ON \"public\".\"meetingBooking\" (\"employeeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"meetingBooking_employeeId_idx_087dd4a6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"meetingBooking_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.meetingBooking.meetingBooking_roomId_idx_fe51d647",
+    "label": "Create index \"meetingBooking_roomId_idx_fe51d647\" on \"meetingBooking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "meetingBooking_roomId_idx_fe51d647",
+        "table": "meetingBooking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"meetingBooking_roomId_idx_fe51d647\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"meetingBooking_roomId_idx_fe51d647\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"meetingBooking_roomId_idx_fe51d647\"",
+        "sql": "CREATE INDEX \"meetingBooking_roomId_idx_fe51d647\" ON \"public\".\"meetingBooking\" (\"roomId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"meetingBooking_roomId_idx_fe51d647\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"meetingBooking_roomId_idx_fe51d647\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.employee.employee_departmentId_fkey",
+    "label": "Add foreign key \"employee_departmentId_fkey\" on \"employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "employee_departmentId_fkey",
+        "table": "employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"employee_departmentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "employee_departmentId_fkey",
+          "public",
+          "\"public\".\"employee\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"employee_departmentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"employee\"\nADD CONSTRAINT \"employee_departmentId_fkey\"\nFOREIGN KEY (\"departmentId\")\nREFERENCES \"public\".\"department\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"employee_departmentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "employee_departmentId_fkey",
+          "public",
+          "\"public\".\"employee\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.meetingBooking.meetingBooking_employeeId_fkey",
+    "label": "Add foreign key \"meetingBooking_employeeId_fkey\" on \"meetingBooking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "meetingBooking_employeeId_fkey",
+        "table": "meetingBooking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"meetingBooking_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "meetingBooking_employeeId_fkey",
+          "public",
+          "\"public\".\"meetingBooking\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"meetingBooking_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"meetingBooking\"\nADD CONSTRAINT \"meetingBooking_employeeId_fkey\"\nFOREIGN KEY (\"employeeId\")\nREFERENCES \"public\".\"employee\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"meetingBooking_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "meetingBooking_employeeId_fkey",
+          "public",
+          "\"public\".\"meetingBooking\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.meetingBooking.meetingBooking_roomId_fkey",
+    "label": "Add foreign key \"meetingBooking_roomId_fkey\" on \"meetingBooking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "meetingBooking_roomId_fkey",
+        "table": "meetingBooking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"meetingBooking_roomId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "meetingBooking_roomId_fkey",
+          "public",
+          "\"public\".\"meetingBooking\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"meetingBooking_roomId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"meetingBooking\"\nADD CONSTRAINT \"meetingBooking_roomId_fkey\"\nFOREIGN KEY (\"roomId\")\nREFERENCES \"public\".\"meetingRoom\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"meetingBooking_roomId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "meetingBooking_roomId_fkey",
+          "public",
+          "\"public\".\"meetingBooking\""
+        ]
+      }
+    ]
+  }
+]

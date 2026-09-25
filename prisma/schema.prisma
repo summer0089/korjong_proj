@@ -1,21 +1,71 @@
 // use prisma-8
+model Employee {
+  id           String                     @id @default(uuid())
+  email        String                     @unique
+  firstname    String
+  lastname     String
+  position     String
+  department   String
+  phoneNumber  String
+  profileImage String?
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String?
-  name      String?
-  posts     Post[]
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+  role         Roles                      @default(USER)
+  password     String
+  isActive     Boolean                    @default(true)
+
+  createdAt    TimestamptzString          @default(now())
+  updatedAt    temporal.updatedAtString()
+
+  departmentId String
+  employeeDept Department                 @relation(fields:[departmentId], references:[id])
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  createdAt TimestamptzString @default(now())
+model Department {
+  id        String                     @id @default(uuid())
+  name      String                     @unique
+  createdAt TimestamptzString          @default(now())
   updatedAt temporal.updatedAtString()
+
+  employees Employee[]
+}
+
+model MeetingRoom {
+  id        String                     @id @default(uuid())
+  name      String                     @unique
+  capacity  Int
+  createdAt TimestamptzString          @default(now())
+  updatedAt temporal.updatedAtString()
+
+  bookings  MeetingBooking[]
+}
+
+model MeetingBooking {
+  id          String                     @id @default(uuid())
+  topic       String
+  participant Int
+  note        String                     @default("")
+  status      MeetingStatus              @default(PENDING)
+  startTime   TimestamptzString
+  endTime     TimestamptzString
+  createdAt   TimestamptzString          @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  employeeId  String
+  employee    Employee                   @relation(fields:[employeeId], references:[id])
+
+  roomId      String
+  room        MeetingRoom                @relation(fields:[roomId], references:[id])
+}
+
+enum MeetingStatus {
+  PENDING
+  APPROVED
+  CANCELED
+  REJECTED
+}
+
+enum Roles {
+  ADMIN
+  APPROVER
+  USER
 }
