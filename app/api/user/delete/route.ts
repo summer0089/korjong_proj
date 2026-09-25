@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
-import checkProtectedApi from "@/utils/helper/protected_api";
+import { checkAuth } from "@/lib/auth/guard";
 
 // DELETE /api/user/delete - ลบบัญชีผู้ใช้งาน (เฉพาะ ADMIN)
 // รองรับการรับ id ผ่าน searchParams (?id=...) หรือ JSON body ({ id: "..." })
 export async function DELETE(req: NextRequest) {
   try {
     // 1. ตรวจสอบสิทธิ์ผู้ดูแลระบบ (ADMIN)
-    const authResult = await checkProtectedApi(["ADMIN"]);
+    const authResult = await checkAuth(["ADMIN"]);
     if (authResult instanceof NextResponse) return authResult;
     const { user: sessionUser } = authResult;
 

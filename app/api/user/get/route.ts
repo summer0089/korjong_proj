@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
-import checkProtectedApi from "@/utils/helper/protected_api";
+import { checkAuth } from "@/lib/auth/guard";
 
 // GET /api/user/get - ดึงข้อมูลผู้ใช้ทั้งหมด
 export async function GET(req: NextRequest) {
   try {
     // 1. ตรวจสอบสิทธิ์ผู้ใช้งาน (เฉพาะ ADMIN)
-    const authResult = await checkProtectedApi(["ADMIN"]);
+    const authResult = await checkAuth(["ADMIN"]);
     if (authResult instanceof NextResponse) return authResult;
 
     // 2. ดึงข้อมูลหน่วยงานทั้งหมด

@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
 import bcrypt from "bcryptjs";
-import checkProtectedApi from "@/utils/helper/protected_api";
+import { checkAuth } from "@/lib/auth/guard";
 
 // POST /api/user/add - เพิ่มบัญชีผู้ใช้งานใหม่โดยผู้ดูแลระบบ (ADMIN)
 export async function POST(req: NextRequest) {
   try {
     // 1. ตรวจสอบสิทธิ์ผู้ดูแลระบบ (ADMIN)
-    const authResult = await checkProtectedApi(["ADMIN"]);
+    const authResult = await checkAuth(["ADMIN"]);
     if (authResult instanceof NextResponse) return authResult;
 
     const body = await req.json();

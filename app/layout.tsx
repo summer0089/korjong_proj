@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar, { NavMenuItem, ProtectedPath, UserMenuItem } from "@/components/nevigation/NavMenu/Navbar";
 import Footer from "@/components/nevigation/Footer";
-import { BarChart3, Building2, Calendar, CalendarDays, DoorClosed, Home, Key, Layers, PlusCircle, User, Users } from "lucide-react";
+import { BarChart3, Building2, Calendar, CalendarDays, Check, DoorClosed, Home, Key, Layers, PlusCircle, User, Users } from "lucide-react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,18 +36,17 @@ const DEFAULT_MENUS: NavMenuItem[] = [
         icon: <PlusCircle className="w-4 h-4 text-[#1a73e8]" />,
         description: "เลือกห้องประชุม วันและช่วงเวลาที่ต้องการ",
       },
-      /*{
-        //ให้แสดงในหน้าหลัก p/home
-        title: "ปฏิทินการใช้ห้องประชุม",
-        href: "/calendar",
-        icon: <Calendar className="w-4 h-4 text-emerald-600" />,
-        description: "ตรวจสอบตารางเวลาห้องประชุมแบบเรียลไทม์",
-      },*/
       {
         title: "รายการจองของฉัน",
-        href: "/u/my-booking",
+        href: "/p/my-booking",
         icon: <CalendarDays className="w-4 h-4 text-purple-600" />,
         description: "ตรวจสอบสถานะและประวัติการจองห้องประชุม",
+      },
+      {
+        title: "การอนุมัติคำขอจอง",
+        href: "/a/approve-list",
+        icon: <Check className="w-4 h-4 text-purple-600" />,
+        description: "อนุมัติคำขอจองห้องประชุม",
       },
     ],
   },
@@ -67,7 +66,7 @@ const DEFAULT_MENUS: NavMenuItem[] = [
           },
           {
             title: "ห้องประชุมและสถานที่",
-            href: "/i/meetingroom",
+            href: "/i/meeting-room",
             icon: <DoorClosed className="w-3.5 h-3.5 text-blue-500" />,
           },
         ],
@@ -123,12 +122,8 @@ const PROTECTED_PATHS: ProtectedPath[] = [
     roles: ["USER", "ADMIN", "APPROVER"],
   },
   {
-    path: "/p/booking/cancel",
-    roles: ["USER", "ADMIN", "APPROVER"],
-  },
-  {
-    path: "/p/booking/edit",
-    roles: ["USER", "ADMIN", "APPROVER"],
+    path: "/p/approve-list",
+    roles: ["ADMIN", "APPROVER"],
   },
   {
     path: "/u/my-booking",

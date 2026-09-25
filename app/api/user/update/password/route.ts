@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { db } from "@/prisma/db";
-import checkProtectedApi from "@/utils/helper/protected_api";
-import { verifyPasswordResetToken } from "@/utils/helper/otp";
+import { checkAuth } from "@/lib/auth/guard";
+import { verifyPasswordResetToken } from "@/lib/auth/otp";
 import { ChangePasswordOwnerSchema } from "@/utils/validation/change_password_form/schema";
 import { ChangePasswordApiSchema } from "@/utils/validation/forgot_password_form/schema";
 
@@ -83,7 +83,7 @@ export async function PUT(req: NextRequest) {
     // =========================================================================
     // กรณีที่ 2: การเปลี่ยนรหัสผ่านสำหรับผู้ใช้งานที่เข้าสู่ระบบแล้ว (Authenticated User)
     // =========================================================================
-    const authResult = await checkProtectedApi(["ADMIN", "USER", "APPROVER"]);
+    const authResult = await checkAuth(["ADMIN", "USER", "APPROVER"]);
     if (authResult instanceof NextResponse) return authResult;
     const { user: sessionUser } = authResult;
 

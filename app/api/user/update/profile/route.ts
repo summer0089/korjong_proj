@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
-import checkProtectedApi from "@/utils/helper/protected_api";
+import { checkAuth } from "@/lib/auth/guard";
 import { EmployeeProfileSchema } from "@/utils/validation/profile_form/schema";
 import {
   createSessionToken,
   getSessionCookieOptions,
   sanitizeEmployeePayload,
   SESSION_COOKIE_NAME,
-} from "@/utils/helper/auth_session";
+} from "@/lib/auth/session";
 
 // PUT /api/user/update/profile - อัปเดตข้อมูลส่วนตัว
 export async function PUT(req: NextRequest) {
   try {
     // 1. ตรวจสอบสิทธิ์ผู้ใช้งานจาก session cookie
-    const authResult = await checkProtectedApi(["USER", "ADMIN", "APPROVER"]);
+    const authResult = await checkAuth(["USER", "ADMIN", "APPROVER"]);
     if (authResult instanceof NextResponse) return authResult;
     const { user: sessionUser } = authResult;
 

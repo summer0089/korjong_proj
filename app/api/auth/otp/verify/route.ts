@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { verifyStatelessOtpToken, createPasswordResetToken, OTP_COOKIE_NAME } from "@/utils/helper/otp";
+import { verifyOtpToken, createPasswordResetToken, OTP_COOKIE_NAME } from "@/lib/auth/otp";
 
 const verifyOtpSchema = z.object({
   email: z
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ตรวจสอบความถูกต้องและเวลาหมดอายุของ Stateless OTP Token
-    const result = verifyStatelessOtpToken(normalizedEmail, otp, token);
+    const result = verifyOtpToken(normalizedEmail, otp, token);
 
     if (!result.isValid) {
       if (result.error === "EXPIRED") {

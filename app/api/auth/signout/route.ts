@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE_NAME } from "@/utils/helper/auth_session";
+import { SESSION_COOKIE_NAME } from "@/lib/auth/session";
 
 // POST /api/auth/signout - ออกจากระบบและลบ Session Cookie
 export async function POST() {

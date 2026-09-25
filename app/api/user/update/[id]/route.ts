@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
 import bcrypt from "bcryptjs";
-import checkProtectedApi from "@/utils/helper/protected_api";
+import { checkAuth } from "@/lib/auth/guard";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -10,7 +10,7 @@ interface RouteParams {
 // PUT /api/user/update/[id] - แก้ไขข้อมูลผู้ใช้งานโดยผู้ดูแลระบบ (ADMIN)
 export async function PUT(req: NextRequest, { params }: RouteParams) {
   try {
-    const authResult = await checkProtectedApi(["ADMIN"]);
+    const authResult = await checkAuth(["ADMIN"]);
     if (authResult instanceof NextResponse) return authResult;
 
     const { id } = await params;

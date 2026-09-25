@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/prisma/db";
-import checkProtectedApi from "@/utils/helper/protected_api";
+import { checkAuth } from "@/lib/auth/guard";
 
 // POST หรือ PUT /api/user/update/status - สลับหรือกำหนดสถานะการใช้งานบัญชี (เฉพาะ ADMIN)
 export async function POST(req: NextRequest) {
@@ -14,7 +14,7 @@ export async function PUT(req: NextRequest) {
 async function handleUpdateStatus(req: NextRequest) {
   try {
     // 1. ตรวจสอบสิทธิ์ผู้ดูแลระบบ (ADMIN)
-    const authResult = await checkProtectedApi(["ADMIN"]);
+    const authResult = await checkAuth(["ADMIN"]);
     if (authResult instanceof NextResponse) return authResult;
     const { user: sessionUser } = authResult;
 

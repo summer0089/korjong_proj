@@ -2,18 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { db } from "@/prisma/db";
-import checkProtectedApi from "@/utils/helper/protected_api";
+import { checkAuth } from "@/lib/auth/guard";
 import {
   createSessionToken,
   getSessionCookieOptions,
   sanitizeEmployeePayload,
   SESSION_COOKIE_NAME,
-} from "@/utils/helper/auth_session";
+} from "@/lib/auth/session";
 
 // POST /api/user/update/profile/image - อัปโหลดรูปภาพโปรไฟล์
 export async function POST(req: NextRequest) {
   try {
-    const authResult = await checkProtectedApi(["ADMIN", "USER", "APPROVER"]);
+    const authResult = await checkAuth(["ADMIN", "USER", "APPROVER"]);
     if (authResult instanceof NextResponse) return authResult;
     const { user: sessionUser } = authResult;
 
