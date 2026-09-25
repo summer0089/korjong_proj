@@ -7,6 +7,9 @@ import {
 // เส้นทางที่ต้องการป้องกัน ต้องเข้าสู่ระบบก่อน (Protected Routes)
 const PROTECTED_PREFIXES = [
   "/p/my-booking",
+  "/p/booking",
+  "/p/report/usage",
+  "/p/report/approval",
   "/u/profile",
   "/u/change-password",
 ];

@@ -78,12 +78,12 @@ const DEFAULT_MENUS: NavMenuItem[] = [
         submenu: [
           {
             title: "สถิติการใช้งานห้องประชุม",
-            href: "/reports/usage",
+            href: "/p/reports/usage",
             icon: <BarChart3 className="w-3.5 h-3.5 text-amber-500" />,
           },
           {
             title: "ประวัติการอนุมัติการจอง",
-            href: "/reports/approvals",
+            href: "/p/reports/approval",
             icon: <CalendarDays className="w-3.5 h-3.5 text-amber-500" />,
           },
         ],
@@ -130,6 +130,14 @@ const PROTECTED_PATHS: ProtectedPath[] = [
     roles: ["USER", "ADMIN", "APPROVER"],
   },
   {
+    path: "/p/report/usage",
+    roles: ["USER", "ADMIN", "APPROVER"],
+  },
+  {
+    path: "/p/report/approval",
+    roles: ["USER", "ADMIN", "APPROVER"],
+  },
+  {
     path: "/u/profile",
     roles: ["USER", "ADMIN", "APPROVER"],
   },
@@ -151,10 +159,6 @@ const PROTECTED_PATHS: ProtectedPath[] = [
   },
   {
     path: "/a/approve-list",
-    roles: ["ADMIN", "APPROVER"],
-  },
-  {
-    path: "/reports",
     roles: ["ADMIN", "APPROVER"],
   },
 ];
