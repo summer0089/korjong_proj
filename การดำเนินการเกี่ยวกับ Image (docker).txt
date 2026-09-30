@@ -1,0 +1,28 @@
+1. คำสั่งการสร้าง Image (Build)
+docker build -t korjong-app:latest .
+
+2. คำสั่งการรัน Container (Run)
+# รันโดยโหลดค่าจากไฟล์ .env
+docker run -d --name korjong-container -p 3000:3000 --env-file .env korjong-app:latest
+
+หรือจะระบบตัวแปรใน .env ได้ 
+docker run -d --name korjong-container -p 3000:3000 -e DATABASE_URL="postgresql://..." korjong-app:latest
+
+3. คำสั่งการอัปเดต Image (Update)
+3.1 Build image ตัวใหม่ทับเวอร์ชันเดิม (หรือตั้งเวอร์ชันใหม่):
+docker build -t korjong-app:latest .
+3.2 หยุด (Stop) และลบ (Remove) container ตัวเดิมที่กำลังรันอยู่
+docker stop korjong-container
+docker rm korjong-container
+3.3 สั่งรัน container ตัวใหม่
+docker run -d --name korjong-container -p 3000:3000 --env-file .env korjong-app:latest
+
+4. คำสั่งการลบ Image และ Container (Delete)
+# หยุด container ก่อน
+docker stop korjong-container
+# ลบ container
+docker rm korjong-container
+# ลบ Image ที่ค้างและไม่ได้ถูกใช้งาน (dangling images)
+docker image prune
+# ล้าง Container ที่หยุดทำงาน, เครือข่ายที่ไม่ได้ใช้, และ Image ที่ไม่ได้ใช้งานทั้งหมด
+docker system prune -a
