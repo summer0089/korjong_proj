@@ -37,7 +37,7 @@ RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
 # คัดลอกไฟล์ static และไฟล์ build แบบ standalone
-COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # กำหนดสิทธิ์ให้โฟลเดอร์ .next ก่อน copy standalone
 RUN mkdir .next && chown nextjs:nodejs .next

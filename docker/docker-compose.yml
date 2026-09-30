@@ -14,6 +14,8 @@ services:
       - HOSTNAME=0.0.0.0
     expose:
       - "3000"
+    volumes:
+      - ../public/profile_images:/app/public/profile_images
     # หากต้องการเปิดเข้าถึง Next.js โดยตรงผ่านพอร์ต 3000 สามารถเอา comment ออกได้:
     # ports:
     #   - "3000:3000"
