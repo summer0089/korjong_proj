@@ -26,3 +26,19 @@ docker rm korjong-container
 docker image prune
 # ล้าง Container ที่หยุดทำงาน, เครือข่ายที่ไม่ได้ใช้, และ Image ที่ไม่ได้ใช้งานทั้งหมด
 docker system prune -a
+
+5. การรันผ่าน Docker Compose ร่วมกับ Nginx Reverse Proxy
+# สั่งรัน container ทั้งหมด (Next.js + Nginx) ในเบื้องหลัง
+docker compose -f docker/docker-compose.yml up -d
+
+# สั่ง rebuild และรันใหม่เมื่อมีการเปลี่ยนแปลงโค้ด
+docker compose -f docker/docker-compose.yml up -d --build
+
+# ตรวจสอบสถานะ
+docker compose -f docker/docker-compose.yml ps
+
+# ดู log
+docker compose -f docker/docker-compose.yml logs -f
+
+# หยุดการทำงาน
+docker compose -f docker/docker-compose.yml down
