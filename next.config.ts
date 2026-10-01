@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
-  basePath: "/korjong",
+  //output: "standalone",
+  //basePath: "/korjong",
   images: {
     unoptimized: true,
   },
